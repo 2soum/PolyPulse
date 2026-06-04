@@ -6,7 +6,7 @@
     <title>PolyPulse — Surveillance des marchés boostés</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
@@ -14,39 +14,47 @@
   <body>
     <header class="topbar">
       <div class="brand">
-        <span class="logo">◎</span>
+        <span class="logo">▰</span>
         <div>
-          <h1>PolyPulse</h1>
-          <p>Surveillance des marchés <b>boostés</b> sur Polymarket</p>
+          <h1>Poly<span>Pulse</span></h1>
+          <p>Surveillance des marchés <b>boostés</b> · Polymarket</p>
         </div>
       </div>
       <div class="controls">
         <select id="category" title="Filtrer par catégorie">
           <option value="">Toutes catégories</option>
         </select>
-        <label class="switch">
-          <input type="checkbox" id="auto" /> <span>Auto 15s</span>
-        </label>
+        <label class="switch"><input type="checkbox" id="auto" /> <span>auto 15s</span></label>
         <button id="refresh" class="btn">↻ Rafraîchir</button>
       </div>
     </header>
 
     <section class="kpis" id="kpis"></section>
 
+    <section class="charts">
+      <div class="panel chart-main">
+        <div class="panel-head">
+          <h2>Évolution des cotes <span class="hint">% « Oui » · snapshots live</span></h2>
+        </div>
+        <div id="chart-prices" class="chart"></div>
+        <div id="legend" class="legend"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Répartition</h2><span class="hint">par catégorie</span></div>
+        <div id="chart-cats" class="chart"></div>
+      </div>
+    </section>
+
     <main class="layout">
       <section class="panel">
         <div class="panel-head">
-          <h2>Ma watchlist</h2>
-          <span class="hint" id="watch-count"></span>
+          <h2>Ma watchlist</h2><span class="hint" id="watch-count"></span>
         </div>
-        <div class="cards" id="watchlist"></div>
+        <div id="watchlist"></div>
       </section>
 
       <aside class="panel discover">
-        <div class="panel-head">
-          <h2>Découvrir les boostés</h2>
-          <span class="hint">top volume 24h</span>
-        </div>
+        <div class="panel-head"><h2>Découvrir</h2><span class="hint">top volume 24h</span></div>
         <div class="discover-list" id="discover"></div>
       </aside>
     </main>
