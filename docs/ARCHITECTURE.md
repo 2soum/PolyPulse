@@ -1,87 +1,82 @@
-# Architecture logicielle — AstroSpot
+# Architecture logicielle — PolyPulse
 
 ## 1. Vue d'ensemble (micro-services)
 
 ```mermaid
 flowchart LR
-    UI[Front web<br/>nginx :8080]
-    SPOT[spot-service<br/>Express :3001]
-    SKY[sky-service<br/>Express :3002]
+    UI[Dashboard<br/>nginx :8080]
+    WATCH[watch-service<br/>Express :3001]
+    POLY[poly-service<br/>Express :3002]
     DB[(PostgreSQL)]
-    WX[[Open-Meteo<br/>API externe]]
+    GAMMA[[Polymarket Gamma<br/>API externe]]
 
-    UI -->|REST /api/spots| SPOT
-    SPOT -->|REST /api/sky/assess| SKY
-    SPOT -->|SQL| DB
-    SKY -->|HTTP /v1/forecast| WX
+    UI -->|REST /api| WATCH
+    WATCH -->|REST /api/markets| POLY
+    WATCH -->|SQL| DB
+    POLY -->|HTTP /markets| GAMMA
 ```
 
-Deux services back indépendants, conteneurisés et orchestrés par `docker-compose`.
-`spot-service` est le service de domaine (spots & planification) ; `sky-service` est un
-service de calcul (qualité du ciel) réutilisable et sans état.
+`watch-service` porte le domaine (watchlist, snapshots, KPIs) ; `poly-service` est un service de
+calcul sans état qui encapsule l'API Polymarket et détecte les marchés boostés.
 
 ## 2. Architecture en couches (par service)
 
 ```mermaid
 flowchart TB
-    subgraph spot-service
-        C1[Controller<br/>spotController.ts]
-        S1[Services<br/>spotService.ts / skyClient.ts]
-        D1[Data<br/>SpotRepository<br/>InMemory · Postgres]
+    subgraph watch-service
+        C1[Controller<br/>watchController.ts]
+        S1[Services<br/>watchService.ts / polyGateway.ts]
+        D1[Data<br/>WatchRepository · SnapshotRepository<br/>InMemory · Postgres]
         C1 --> S1 --> D1
     end
-    subgraph sky-service
-        C2[Controller<br/>skyController.ts]
-        S2[Services<br/>skyConditionsService.ts / weatherClient.ts]
-        D2[Data<br/>LightPollutionRepository]
+    subgraph poly-service
+        C2[Controller<br/>marketController.ts]
+        S2[Services<br/>marketService.ts / polymarketClient.ts / marketNormalizer.ts]
+        D2[Data<br/>CategoryRepository]
         C2 --> S2 --> D2
     end
 ```
 
-**Règle de dépendance :** une couche ne dépend que de la couche immédiatement inférieure,
-et toujours via une **interface** (`SpotRepository`, `WeatherClient`, `SkyGateway`). C'est
-ce découplage qui rend chaque couche testable isolément et permet de substituer
-l'implémentation en mémoire par PostgreSQL sans toucher au reste.
+**Règle de dépendance :** chaque couche ne dépend que de la couche inférieure, via une
+**interface** (`WatchRepository`, `SnapshotRepository`, `PolymarketClient`, `PolyGateway`,
+`CategoryRepository`). Les implémentations en mémoire et PostgreSQL sont interchangeables.
 
-## 3. Calcul du score de qualité du ciel
+## 3. Détection « boosté » et score
 
 ```
-lightScore = (9 − bortleClass) / 8 × 100      # Bortle 1 (ciel pur) -> 100, Bortle 9 (ville) -> 0
-cloudScore = 100 − couvertureNuageuseMoyenne  # %
-score      = round(0.5 × lightScore + 0.5 × cloudScore)   # borné [0, 100]
-
-rating  = EXCELLENT (≥80) | GOOD (≥60) | FAIR (≥40) | POOR (<40)
-recommended = score ≥ 60
+boosted = rewardsMinSize > 0  OU  holdingRewardsEnabled
+score   = 40·(rewardsMinSize>0) + 40·(holdingRewards) + 20·min(1, rewardsMaxSpread/5)   # [0,100]
 ```
 
-## 4. Séquence : planifier une observation
+## 4. Séquence : ajouter un marché et rafraîchir le dashboard
 
 ```mermaid
 sequenceDiagram
-    participant U as Front web
-    participant SP as spot-service
-    participant SK as sky-service
-    participant WX as Open-Meteo
+    participant U as Dashboard
+    participant W as watch-service
+    participant P as poly-service
+    participant G as Polymarket Gamma
 
-    U->>SP: POST /api/spots/{id}/plan { date }
-    SP->>SP: get(spot) depuis le repository
-    SP->>SK: GET /api/sky/assess?lat&lon&date
-    SK->>SK: findNearest(bortle) [Data]
-    SK->>WX: GET /v1/forecast (cloudcover)
-    WX-->>SK: couverture nuageuse horaire
-    SK-->>SP: { score, rating, recommended }
-    SP-->>U: { spot, date, assessment, recommended }
+    U->>W: POST /api/watchlist { marketId }
+    W->>P: GET /api/markets/{id}
+    P->>G: GET /markets/{id}
+    G-->>P: marché brut
+    P-->>W: marché normalisé (+ boost, catégorie)
+    W->>W: enregistre (watchlist + 1er snapshot) [Postgres]
+    U->>W: GET /api/dashboard
+    W->>P: GET /api/markets/{id} (par marché suivi)
+    W->>W: snapshot + agrégation KPIs
+    W-->>U: { kpis, rows[] (sparklines) }
 ```
 
 ## 5. Stratégie de test par couche
 
-| Couche      | Type de test          | Outils                       | Exemple de fichier                         |
-| ----------- | --------------------- | ---------------------------- | ------------------------------------------ |
-| Data        | unitaire              | Jest                         | `lightPollutionRepository.test.ts`         |
-| Services    | unitaire + mocks      | Jest (jest.fn), nock         | `skyConditionsService.test.ts`, `weatherClient.test.ts` |
-| Controller  | intégration HTTP      | Supertest + nock             | `skyController.test.ts`, `spotController.test.ts` |
-| Inter-service | mock web            | nock                         | `skyClient.test.ts`                        |
+| Couche        | Type de test       | Outils           | Exemple                              |
+| ------------- | ------------------ | ---------------- | ------------------------------------ |
+| Data          | unitaire           | Jest             | `categoryRepository.test.ts`, `repositories.test.ts` |
+| Services      | unitaire + mocks   | Jest, nock       | `marketNormalizer.test.ts`, `watchService.test.ts` |
+| Controller    | intégration HTTP   | Supertest + nock | `marketController.test.ts`, `watchController.test.ts` |
+| Inter-service | mock web           | nock             | `polyGateway.test.ts`                |
 
-Les **mocks web (nock)** interceptent les deux frontières HTTP : l'API météo externe et
-l'appel `spot-service → sky-service`, ce qui permet de tester chaque service de façon
-totalement isolée et déterministe.
+Les **mocks web (nock)** interceptent les deux frontières HTTP : l'API Polymarket Gamma (externe)
+et l'appel `watch-service → poly-service`, pour des tests isolés et déterministes.

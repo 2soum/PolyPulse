@@ -1,146 +1,123 @@
-# 🔭 AstroSpot — Planificateur de soirées d'observation des étoiles
+# 🟢 PolyPulse — Surveillance des marchés boostés sur Polymarket
 
 Projet **DevOps** — application répartie en deux micro-services back qui collaborent pour
-répondre à une question simple : **« Vaut-il la peine de sortir le télescope ce soir, à cet endroit ? »**
-
-AstroSpot croise deux facteurs : la **pollution lumineuse** (échelle de Bortle) du site le plus
-proche et la **couverture nuageuse** prévue (API météo externe), pour produire un **score de
-qualité du ciel** de 0 à 100 et une recommandation.
+**surveiller les marchés de prédiction « boostés »** de [Polymarket](https://polymarket.com)
+(ceux qui offrent des récompenses de liquidité) et les afficher dans un **dashboard** temps réel.
 
 ---
 
 ## 🎯 Cas d'usage
 
-1. L'utilisateur enregistre des **spots d'observation** (nom, coordonnées) via `spot-service`.
-2. Il demande une **planification** pour une date : `spot-service` appelle `sky-service`.
-3. `sky-service` combine sa base de **pollution lumineuse** (couche Data) avec la **météo**
-   récupérée auprès d'un fournisseur **externe** (Open-Meteo) et renvoie un score + une note.
-4. Le **front web** affiche le verdict : ✅ « Sortez les télescopes » ou ⛅ « Mieux vaut attendre ».
+Sur Polymarket, certains marchés sont **boostés** : ils distribuent des récompenses aux apporteurs
+de liquidité (`rewardsMinSize`, `holdingRewardsEnabled`). PolyPulse permet de :
 
-Ce découpage crée **deux frontières HTTP distinctes** — `spot-service → sky-service` et
-`sky-service → fournisseur météo` — qui justifient pleinement les **mocks web** demandés.
+1. **découvrir** les marchés boostés les plus actifs (volume 24h) ;
+2. les **ajouter à une watchlist** (persistée en base) ;
+3. suivre dans un **dashboard** : cote « Oui », variation 24h, volume, **boost score**, **courbe
+   d'évolution** (snapshots), **répartition par catégorie**.
+
+`watch-service` interroge `poly-service`, qui interroge l'**API externe Polymarket Gamma** : deux
+frontières HTTP → les **mocks web** demandés par le sujet sont pleinement justifiés.
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-                ┌───────────────┐   HTTP    ┌──────────────┐   HTTP   ┌──────────────────┐
-   Navigateur ─▶│  spot-service │ ───────▶  │  sky-service │ ──────▶  │ Open-Meteo (ext.)│
-   (front web)  │   port 3001   │  /assess  │   port 3002  │ /forecast│  météo            │
-                └──────┬────────┘           └──────┬───────┘          └──────────────────┘
-                       │                           │
-                 ┌─────▼─────┐               ┌─────▼──────────────┐
-                 │ PostgreSQL│               │ Catalogue pollution│
-                 │  (spots)  │               │ lumineuse (in-mem) │
-                 └───────────┘               └────────────────────┘
+              ┌────────────────┐  HTTP   ┌───────────────┐  HTTP   ┌────────────────────┐
+  Dashboard ─▶│  watch-service │ ──────▶ │  poly-service │ ──────▶ │ Polymarket Gamma   │
+   (nginx)    │   :3001        │ /markets│   :3002       │/markets │ API (externe)      │
+              └──────┬─────────┘         └───────┬───────┘         └────────────────────┘
+                     │                           │
+              ┌──────▼──────┐            ┌────────▼─────────┐
+              │ PostgreSQL  │            │ Catalogue de     │
+              │ watchlist + │            │ catégories       │
+              │ snapshots   │            │ (couche Data)    │
+              └─────────────┘            └──────────────────┘
 ```
 
-Chaque service respecte une **architecture en couches** stricte :
+Architecture **en couches** stricte dans chaque service :
 
-| Couche              | `spot-service`                          | `sky-service`                              |
-| ------------------- | --------------------------------------- | ------------------------------------------ |
-| **Controller (web)**| `controller/spotController.ts`          | `controller/skyController.ts`              |
-| **Services**        | `services/spotService.ts`, `skyClient`  | `services/skyConditionsService.ts`, `weatherClient` |
-| **Data**            | `data/spotRepository.ts` (+ Postgres)   | `data/lightPollutionRepository.ts`         |
+| Couche               | `watch-service`                                | `poly-service`                                  |
+| -------------------- | ---------------------------------------------- | ----------------------------------------------- |
+| **Controller (web)** | `controller/watchController.ts`                | `controller/marketController.ts`                |
+| **Services**         | `services/watchService.ts`, `polyGateway.ts`   | `services/marketService.ts`, `polymarketClient.ts`, `marketNormalizer.ts` |
+| **Data**             | `data/watchRepository.ts`, `snapshotRepository.ts` (+ Postgres) | `data/categoryRepository.ts`   |
 
-> Schéma détaillé et diagramme de séquence : [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+> Schémas détaillés (couches + séquence) : [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+**Boost score** (0–100, explicable) :
+`40·(LP rewards) + 40·(holding rewards) + 20·min(1, rewardsMaxSpread/5)`.
 
 ---
 
 ## 🚀 Démarrage
 
-### Tout-en-un (Docker)
-
 ```bash
-make up           # docker compose up --build
-# Front      : http://localhost:8080
-# spot-service: http://localhost:3001/health
-# sky-service : http://localhost:3002/health
+make up        # docker compose up --build
+# Dashboard     : http://localhost:8080
+# watch-service : http://localhost:3001/health
+# poly-service  : http://localhost:3002/health
 ```
 
-### En local (sans Docker)
-
-```bash
-make install      # npm ci dans les deux services
-# Terminal 1
-cd services/sky-service && npm run dev      # port 3002
-# Terminal 2
-cd services/spot-service && npm run dev     # port 3001 (in-memory, sans Postgres)
-# Terminal 3 : servir le front
-cd frontend && python3 -m http.server 8080
-```
+En local sans Docker : `make install`, puis `npm run dev` dans chaque service (watch-service en
+mémoire si `DATABASE_URL` absent), et servir `frontend/` (`python3 -m http.server 8080`).
 
 ---
 
 ## ✅ Tests, couverture & qualité
 
 ```bash
-make coverage     # tests + rapport de couverture des deux services
-make lint         # ESLint (TypeScript strict)
+make coverage   # rapports HTML dans services/*/coverage/lcov-report/index.html
+make lint
 ```
 
-| Service        | Tests | Couverture (lignes) | Couverture (branches) |
-| -------------- | ----- | ------------------- | --------------------- |
-| `sky-service`  | 30    | **100 %**           | 92.6 %                |
-| `spot-service` | 26    | **98 %**            | 94.1 %                |
+| Service         | Tests | Couverture (lignes) | Branches |
+| --------------- | ----- | ------------------- | -------- |
+| `poly-service`  | 40    | **97.9 %**          | 91.8 %   |
+| `watch-service` | 36    | **97.1 %**          | 94.2 %   |
 
-**Stack de test :** [Jest](https://jestjs.io) (tests unitaires), [Supertest](https://github.com/ladjs/supertest)
-(tests HTTP de la couche Controller), [nock](https://github.com/nock/nock) (**mocks web** : le
-fournisseur météo externe *et* l'appel inter-service `spot → sky` sont simulés).
-
-Les rapports HTML de couverture sont générés dans `services/*/coverage/lcov-report/index.html`
-et publiés comme artefacts par la CI.
+**Stack de test :** Jest (unitaire), Supertest (Controller HTTP), **nock** (mocks web : API
+Polymarket externe **et** appel inter-service `watch → poly`). Seuils imposés via
+`coverageThreshold` (la CI échoue sous le seuil).
 
 ---
 
 ## 🔁 Pipeline CI
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) — à chaque *push* / *pull request* :
-
-1. **matrice** sur les deux services → `npm ci`, `lint`, `build`, `test:coverage` ;
-2. publication des rapports de couverture en artefacts ;
-3. **build des images Docker** (`sky-service`, `spot-service`, `frontend`) + validation `docker compose`.
-
-> Pas de Continuous Delivery (hors programme) : la CI s'arrête au build/test/qualité.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) — à chaque push / PR :
+matrice sur les 2 services (`npm ci` → `lint` → `build` → `test:coverage`), artefacts de
+couverture, puis build des 3 images Docker + validation `docker compose`.
 
 ---
 
 ## 🧱 Conformité au sujet
 
-| Exigence                               | Réalisation                                                            |
-| -------------------------------------- | --------------------------------------------------------------------- |
-| Dépôt Git                              | ✅ ce dépôt                                                            |
-| Pipeline CI                            | ✅ GitHub Actions (lint + build + test + docker)                       |
-| Architecture en couches (Data/Services/Controller) | ✅ stricte dans les deux services                         |
-| ≥ 2 services back avec Docker          | ✅ `spot-service` + `sky-service`, `docker-compose.yml`                |
-| Tests de toutes les couches           | ✅ Data, Services, Controller couverts                                 |
-| Framework de tests unitaires          | ✅ Jest                                                                |
-| Mocks web                              | ✅ nock (météo externe + inter-service) + Supertest                    |
-| Bonne couverture de code              | ✅ ≥ 98 % lignes, seuils imposés (`coverageThreshold`)                 |
-| Qualité logicielle élevée             | ✅ TypeScript `strict`, ESLint, Prettier, repositories découplés       |
-| **Bonus** Front web                    | ✅ `frontend/` (HTML/CSS/JS, servi par nginx)                          |
-| **Bonus** Base de données              | ✅ PostgreSQL (`PostgresSpotRepository`)                               |
+| Exigence                                | Réalisation                                              |
+| --------------------------------------- | -------------------------------------------------------- |
+| Dépôt Git                               | ✅                                                       |
+| Pipeline CI                             | ✅ GitHub Actions                                        |
+| Architecture en couches                 | ✅ Data / Services / Controller                          |
+| ≥ 2 services back avec Docker           | ✅ `poly-service` + `watch-service`                      |
+| Tests de toutes les couches             | ✅ Jest + Supertest + nock                               |
+| Mocks web                               | ✅ Polymarket externe + inter-service                    |
+| Bonne couverture                        | ✅ ~97 % lignes, seuils imposés                          |
+| Qualité élevée                          | ✅ TypeScript strict, ESLint, Prettier                   |
+| **Bonus** Front web                     | ✅ dashboard (graphes, sparklines, filtres)              |
+| **Bonus** Base de données               | ✅ PostgreSQL (watchlist + snapshots)                    |
 
 ---
-
-## ⚠️ Limites connues
-
-- Le fournisseur météo (Open-Meteo) ne fournit de prévisions que sur **~16 jours**. Au-delà,
-  `sky-service` renvoie `502` (dégradation gracieuse, testée) plutôt qu'un score erroné.
-- Le catalogue de pollution lumineuse est volontairement réduit à quelques sites français
-  (couche Data en mémoire) — facilement remplaçable par une vraie base.
 
 ## 📁 Structure
 
 ```
 .
-├── docker-compose.yml            # 2 services + Postgres + front
-├── Makefile                      # raccourcis (install/test/coverage/up...)
+├── docker-compose.yml            # 2 services + Postgres + dashboard
+├── Makefile                      # install / test / coverage / up …
 ├── .github/workflows/ci.yml      # pipeline CI
-├── docs/ARCHITECTURE.md          # schémas (couches + séquence)
-├── frontend/                     # bonus : front web
+├── docs/ARCHITECTURE.md          # schémas
+├── frontend/                     # dashboard (HTML/CSS/JS, nginx)
 └── services/
-    ├── sky-service/              # météo + pollution lumineuse -> score
-    └── spot-service/             # spots, sessions, planification (Postgres)
+    ├── poly-service/             # gateway Polymarket + détection boost
+    └── watch-service/            # watchlist + snapshots (Postgres) + KPIs
 ```

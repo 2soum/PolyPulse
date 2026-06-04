@@ -2,33 +2,33 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <title>Rapport DevOps — AstroSpot</title>
+    <title>Rapport DevOps — PolyPulse</title>
     <style>
       @page {
         size: A4;
-        margin: 18mm 16mm;
+        margin: 16mm 15mm;
       }
       * {
         box-sizing: border-box;
       }
       :root {
-        --ink: #1a2238;
-        --muted: #5b6685;
-        --line: #e2e6f0;
-        --accent: #5566ff;
-        --accent2: #7c4dff;
-        --good: #16a34a;
-        --bg-soft: #f5f7fc;
-        --night1: #0b1026;
-        --night2: #1a2150;
-        --gold: #ffd479;
+        --ink: #14201a;
+        --muted: #5c6f66;
+        --line: #d8e2dc;
+        --green: #0f9d58;
+        --green-d: #0a7a44;
+        --green-soft: #eaf7f0;
+        --night1: #04110a;
+        --night2: #0a2417;
+        --red: #c0392b;
+        --mono: 'SFMono-Regular', Consolas, monospace;
       }
       html {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
       body {
-        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
         color: var(--ink);
         margin: 0;
         font-size: 10.5pt;
@@ -43,47 +43,45 @@
       p {
         margin: 0 0 0.7em;
       }
-      a {
-        color: var(--accent);
-        text-decoration: none;
-      }
       code {
-        font-family: "SFMono-Regular", Consolas, monospace;
-        background: var(--bg-soft);
+        font-family: var(--mono);
+        background: var(--green-soft);
         padding: 1px 5px;
         border-radius: 4px;
-        font-size: 0.88em;
-        color: #3b3f86;
+        font-size: 0.86em;
+        color: var(--green-d);
       }
       .page-break {
         page-break-before: always;
       }
 
-      /* ---------- COVER ---------- */
+      /* COVER */
       .cover {
         position: relative;
-        height: 247mm;
-        margin: -18mm -16mm 0;
-        padding: 34mm 22mm;
-        background: radial-gradient(circle at 22% 12%, #2a3570, transparent 45%),
-          linear-gradient(160deg, var(--night2), var(--night1) 70%);
+        height: 250mm;
+        margin: -16mm -15mm 0;
+        padding: 32mm 20mm;
+        background: linear-gradient(160deg, var(--night2), var(--night1) 72%);
         background-color: var(--night1);
-        color: #eef2ff;
+        color: #e8f5ee;
         overflow: hidden;
       }
-      .stars {
+      .glow {
         position: absolute;
-        inset: 0;
-        background-image: radial-gradient(1.4px 1.4px at 12% 18%, #fff, transparent),
-          radial-gradient(1.2px 1.2px at 30% 42%, #cfe, transparent),
-          radial-gradient(1.6px 1.6px at 55% 22%, #fff, transparent),
-          radial-gradient(1px 1px at 72% 60%, #fff, transparent),
-          radial-gradient(1.3px 1.3px at 85% 30%, #ffe9b0, transparent),
-          radial-gradient(1px 1px at 18% 72%, #fff, transparent),
-          radial-gradient(1.5px 1.5px at 64% 80%, #cfe, transparent),
-          radial-gradient(1px 1px at 42% 88%, #fff, transparent),
-          radial-gradient(1.2px 1.2px at 90% 70%, #fff, transparent);
-        opacity: 0.9;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(31, 212, 126, 0.28), transparent 70%);
+        top: -80px;
+        right: -60px;
+      }
+      .pulse {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 78mm;
+        height: 60px;
+        opacity: 0.5;
       }
       .cover-inner {
         position: relative;
@@ -96,23 +94,28 @@
         letter-spacing: 0.28em;
         text-transform: uppercase;
         font-size: 9pt;
-        color: var(--gold);
-        font-weight: 600;
+        color: var(--green);
+        font-weight: 700;
       }
-      .scope {
-        font-size: 64pt;
-        margin: 6mm 0 0;
+      .mark {
+        font-size: 40pt;
+        color: var(--green);
+        margin: 8mm 0 0;
+        letter-spacing: 4px;
       }
       .cover h1 {
-        font-size: 40pt;
-        margin: 2mm 0 0;
+        font-size: 46pt;
+        margin: 1mm 0 0;
         font-weight: 800;
-        letter-spacing: -0.5px;
+        letter-spacing: -1px;
+      }
+      .cover h1 span {
+        color: var(--green);
       }
       .cover .tagline {
-        font-size: 14pt;
-        color: #b9c2ec;
-        max-width: 130mm;
+        font-size: 13.5pt;
+        color: #9fc7b3;
+        max-width: 135mm;
         margin-top: 4mm;
       }
       .cover-meta {
@@ -120,14 +123,14 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 6mm 10mm;
-        border-top: 1px solid rgba(255, 255, 255, 0.18);
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
         padding-top: 7mm;
       }
       .cover-meta .k {
         font-size: 8.5pt;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: #8c96c6;
+        color: #6f9684;
       }
       .cover-meta .v {
         font-size: 12pt;
@@ -137,11 +140,11 @@
       .cover-meta .v small {
         display: block;
         font-weight: 400;
-        color: #b9c2ec;
+        color: #9fc7b3;
         font-size: 9.5pt;
       }
 
-      /* ---------- SECTIONS ---------- */
+      /* SECTIONS */
       .section-title {
         display: flex;
         align-items: baseline;
@@ -151,9 +154,10 @@
         margin: 0 0 14px;
       }
       .section-title .num {
-        color: var(--accent);
+        color: var(--green);
         font-weight: 800;
         font-size: 13pt;
+        font-family: var(--mono);
       }
       .section-title h2 {
         font-size: 15pt;
@@ -167,7 +171,7 @@
         width: 100%;
         border-collapse: collapse;
         margin: 6px 0 14px;
-        font-size: 9.7pt;
+        font-size: 9.6pt;
       }
       th,
       td {
@@ -176,8 +180,8 @@
         border-bottom: 1px solid var(--line);
       }
       th {
-        background: var(--bg-soft);
-        color: var(--muted);
+        background: var(--green-soft);
+        color: var(--green-d);
         font-size: 8.5pt;
         text-transform: uppercase;
         letter-spacing: 0.04em;
@@ -186,25 +190,24 @@
         font-weight: 600;
       }
       .ok {
-        color: var(--good);
+        color: var(--green);
         font-weight: 700;
       }
 
-      .grid2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-      }
       .callout {
-        background: var(--bg-soft);
-        border-left: 3px solid var(--accent);
+        background: var(--green-soft);
+        border-left: 3px solid var(--green);
         border-radius: 0 8px 8px 0;
         padding: 10px 14px;
         margin: 10px 0;
         font-size: 9.8pt;
       }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
 
-      /* ---------- STAT CARDS ---------- */
       .stats {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -220,33 +223,32 @@
       .stat .big {
         font-size: 22pt;
         font-weight: 800;
-        color: var(--accent2);
+        color: var(--green);
+        font-family: var(--mono);
       }
       .stat .lbl {
         font-size: 8.5pt;
         color: var(--muted);
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.05em;
       }
-
       .bar {
         height: 8px;
         border-radius: 6px;
-        background: #eceffa;
+        background: #e7efe9;
         overflow: hidden;
         margin-top: 4px;
       }
       .bar > span {
         display: block;
         height: 100%;
-        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        background: linear-gradient(90deg, var(--green-d), var(--green));
       }
 
-      /* ---------- ARCHITECTURE DIAGRAM ---------- */
+      /* ARCH DIAGRAM */
       .arch {
         display: flex;
         align-items: stretch;
-        gap: 0;
         margin: 10px 0 4px;
       }
       .node {
@@ -262,25 +264,25 @@
         font-size: 10pt;
       }
       .node .s {
-        font-size: 8.3pt;
+        font-size: 8.2pt;
         color: var(--muted);
       }
-      .node.spot {
-        border-color: #9db0ff;
-        background: #f3f6ff;
+      .node.w {
+        border-color: #9bd9ba;
+        background: #f1faf5;
       }
-      .node.sky {
-        border-color: #c9b0ff;
-        background: #f7f3ff;
+      .node.p {
+        border-color: #9bd9ba;
+        background: #f1faf5;
       }
       .node.ext {
-        border-color: #ffd9a8;
-        background: #fff8ef;
+        border-color: #cfd8d3;
+        background: #f7f9f8;
       }
       .arrow {
         align-self: center;
-        padding: 0 8px;
-        color: var(--accent);
+        padding: 0 7px;
+        color: var(--green);
         font-weight: 700;
         font-size: 8pt;
         text-align: center;
@@ -291,7 +293,6 @@
         color: var(--muted);
         font-weight: 400;
       }
-
       .layers {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -316,19 +317,12 @@
         font-size: 9pt;
       }
       .layer b {
-        color: var(--accent2);
+        color: var(--green-d);
       }
       .layer code {
-        font-size: 8.2pt;
-      }
-      .layer.controller {
-        background: #fbfcff;
-      }
-      .layer.data {
-        background: #fafbff;
+        font-size: 8.1pt;
       }
 
-      /* ---------- FIGURE ---------- */
       figure {
         margin: 8px 0;
         border: 1px solid var(--line);
@@ -343,7 +337,7 @@
         font-size: 8.6pt;
         color: var(--muted);
         padding: 7px 12px;
-        background: var(--bg-soft);
+        background: var(--green-soft);
       }
       ul.clean {
         margin: 4px 0 10px;
@@ -353,18 +347,18 @@
         margin-bottom: 3px;
       }
       .formula {
-        font-family: "SFMono-Regular", Consolas, monospace;
+        font-family: var(--mono);
         background: var(--night1);
-        color: #d7e0ff;
+        color: #bfe8d2;
         padding: 12px 14px;
         border-radius: 10px;
-        font-size: 8.8pt;
+        font-size: 8.7pt;
         line-height: 1.7;
         white-space: pre;
         overflow-x: auto;
       }
       .formula .c {
-        color: #7e88b8;
+        color: #5f8a73;
       }
       .footer-note {
         margin-top: 16px;
@@ -376,245 +370,183 @@
     </style>
   </head>
   <body>
-    <!-- ===================== COVER ===================== -->
+    <!-- COVER -->
     <section class="cover">
-      <div class="stars"></div>
+      <div class="glow"></div>
+      <svg class="pulse" viewBox="0 0 600 60" preserveAspectRatio="none">
+        <polyline
+          fill="none"
+          stroke="#1fd47e"
+          stroke-width="2"
+          points="0,30 80,30 110,30 130,8 150,52 175,30 260,30 290,30 310,14 330,46 355,30 600,30"
+        />
+      </svg>
       <div class="cover-inner">
         <div class="eyebrow">Projet DevOps · Rapport écrit</div>
-        <div class="scope">🔭</div>
-        <h1>AstroSpot</h1>
+        <div class="mark">▰▰▰</div>
+        <h1>Poly<span>Pulse</span></h1>
         <p class="tagline">
-          Planificateur de soirées d'observation des étoiles — une architecture micro-services qui
-          croise pollution lumineuse et météo pour noter la qualité du ciel.
+          Surveillance des marchés « boostés » de Polymarket — deux micro-services et un dashboard
+          temps réel pour suivre cotes, volumes et récompenses de liquidité.
         </p>
-
         <div class="cover-meta">
           <div>
             <div class="k">Binôme</div>
-            <div class="v">
-              Dayssam Bakaar
-              <small>Kais Hammache</small>
-            </div>
+            <div class="v">Dayssam Bakaar<small>Kais Hammache</small></div>
           </div>
           <div>
             <div class="k">Classe</div>
-            <div class="v">
-              LSI 1 · APP
-              <small>Ingé 2</small>
-            </div>
+            <div class="v">LSI 1 · APP<small>Ingé 2</small></div>
           </div>
           <div>
             <div class="k">Stack</div>
-            <div class="v">
-              TypeScript · Node 22
-              <small>Express · Jest · Docker</small>
-            </div>
+            <div class="v">TypeScript · Node 22<small>Express · Jest · Docker · PostgreSQL</small></div>
           </div>
           <div>
             <div class="k">Échéance</div>
-            <div class="v">
-              21 juin
-              <small>Remise sur Moodle</small>
-            </div>
+            <div class="v">21 juin<small>Remise sur Moodle</small></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ===================== 1. PRÉSENTATION ===================== -->
+    <!-- 1. PRÉSENTATION -->
     <section class="page-break">
       <div class="section-title"><span class="num">01</span><h2>Présentation & cas d'usage</h2></div>
       <p class="lead">
-        <strong>AstroSpot</strong> répond à une question concrète d'astronomie amateur :
-        <em>« Vaut-il la peine de sortir le télescope ce soir, à cet endroit ? »</em>
+        <strong>PolyPulse</strong> surveille les marchés de prédiction <em>boostés</em> de
+        Polymarket : ceux qui distribuent des récompenses aux apporteurs de liquidité.
       </p>
-      <p>L'application combine deux facteurs déterminants pour observer les étoiles :</p>
+      <p>L'utilisateur peut :</p>
       <ul class="clean">
+        <li><b>découvrir</b> les marchés boostés les plus actifs (tri par volume 24h) ;</li>
+        <li>les <b>ajouter à une watchlist</b> persistée en base de données ;</li>
         <li>
-          la <b>pollution lumineuse</b> du site (échelle de Bortle : 1 = ciel pur → 9 = ciel
-          urbain) ;
-        </li>
-        <li>
-          la <b>couverture nuageuse</b> prévue, récupérée auprès d'une <b>API météo externe</b>
-          (Open-Meteo).
+          suivre un <b>dashboard</b> : cote « Oui », variation 24h, volume, <b>boost score</b>,
+          courbe d'évolution (snapshots) et répartition par catégorie.
         </li>
       </ul>
-      <p>
-        Elle en déduit un <b>score de qualité du ciel</b> (0–100), une <b>note</b>
-        (EXCELLENT / GOOD / FAIR / POOR) et une <b>recommandation</b>.
-      </p>
       <div class="callout">
-        <strong>Pourquoi ce sujet pour un projet DevOps ?</strong> Le découpage fonctionnel impose
-        <b>deux services back qui communiquent par HTTP</b>, créant <b>deux frontières réseau</b>
-        (<code>spot → sky</code> et <code>sky → météo</code>). Cela rend les <b>mocks web</b> exigés
-        par le sujet réellement nécessaires — et non artificiels.
+        <strong>Pourquoi ce sujet pour un projet DevOps ?</strong> Le flux impose
+        <b>deux services back qui communiquent par HTTP</b> (<code>watch → poly</code>), et
+        <code>poly</code> appelle l'<b>API externe Polymarket Gamma</b>. Ces
+        <b>deux frontières réseau</b> rendent les <b>mocks web</b> exigés par le sujet réellement
+        nécessaires — à deux niveaux.
       </div>
-
-      <div class="formula"><span class="c"># Calcul du score de qualité du ciel</span>
-lightScore = (9 − bortleClass) / 8 × 100   <span class="c"># Bortle 1 → 100, Bortle 9 → 0</span>
-cloudScore = 100 − couvertureNuageuse(%)
-score      = round(0.5 × lightScore + 0.5 × cloudScore)   <span class="c"># borné [0,100]</span>
-
-rating      = EXCELLENT(≥80) · GOOD(≥60) · FAIR(≥40) · POOR(&lt;40)
-recommended = score ≥ 60</div>
+      <div class="formula"><span class="c"># Détection « boosté » et score d'attractivité</span>
+boosted = rewardsMinSize &gt; 0   OU   holdingRewardsEnabled
+score   = 40·(rewardsMinSize&gt;0) + 40·(holdingRewards) + 20·min(1, rewardsMaxSpread/5)   <span class="c"># [0,100]</span></div>
     </section>
 
-    <!-- ===================== 2. ARCHITECTURE ===================== -->
+    <!-- 2. ARCHITECTURE -->
     <section class="page-break">
       <div class="section-title"><span class="num">02</span><h2>Architecture logicielle</h2></div>
-
       <h3>2.1 — Vue micro-services</h3>
       <div class="arch">
         <div class="node">
-          <div class="t">Front web</div>
+          <div class="t">Dashboard</div>
           <div class="s">nginx · :8080</div>
         </div>
-        <div class="arrow">──HTTP──▶<small>/api/spots</small></div>
-        <div class="node spot">
-          <div class="t">spot-service</div>
+        <div class="arrow">──▶<small>REST /api</small></div>
+        <div class="node w">
+          <div class="t">watch-service</div>
           <div class="s">Express · :3001<br />+ PostgreSQL</div>
         </div>
-        <div class="arrow">──HTTP──▶<small>/api/sky/assess</small></div>
-        <div class="node sky">
-          <div class="t">sky-service</div>
-          <div class="s">Express · :3002<br />+ pollution lumineuse</div>
+        <div class="arrow">──▶<small>/api/markets</small></div>
+        <div class="node p">
+          <div class="t">poly-service</div>
+          <div class="s">Express · :3002<br />détection boost</div>
         </div>
-        <div class="arrow">──HTTP──▶<small>/v1/forecast</small></div>
+        <div class="arrow">──▶<small>/markets</small></div>
         <div class="node ext">
-          <div class="t">Open-Meteo</div>
-          <div class="s">API externe<br />météo</div>
+          <div class="t">Polymarket</div>
+          <div class="s">Gamma API<br />(externe)</div>
         </div>
       </div>
       <p class="lead" style="font-size: 9pt">
-        Deux services back indépendants, conteneurisés et orchestrés par <code>docker-compose</code>.
-        <code>spot-service</code> porte le domaine (spots & planification) ; <code>sky-service</code>
-        est un service de calcul sans état, réutilisable.
+        <code>watch-service</code> porte le domaine (watchlist, snapshots, KPIs) ;
+        <code>poly-service</code> est un service de calcul sans état encapsulant Polymarket.
       </p>
 
-      <h3 style="margin-top: 14px">2.2 — Architecture en couches (par service)</h3>
+      <h3 style="margin-top: 14px">2.2 — Architecture en couches</h3>
       <div class="layers">
         <div class="stack">
-          <h4>spot-service</h4>
-          <div class="layer controller">
-            <b>Controller</b> · <code>spotController.ts</code>
-          </div>
-          <div class="layer">
-            <b>Services</b> · <code>spotService.ts</code>, <code>skyClient.ts</code>
-          </div>
-          <div class="layer data">
-            <b>Data</b> · <code>SpotRepository</code> (InMemory · PostgreSQL)
-          </div>
+          <h4>watch-service</h4>
+          <div class="layer"><b>Controller</b> · <code>watchController.ts</code></div>
+          <div class="layer"><b>Services</b> · <code>watchService.ts</code>, <code>polyGateway.ts</code></div>
+          <div class="layer"><b>Data</b> · <code>WatchRepository</code>, <code>SnapshotRepository</code> (Postgres)</div>
         </div>
         <div class="stack">
-          <h4>sky-service</h4>
-          <div class="layer controller">
-            <b>Controller</b> · <code>skyController.ts</code>
-          </div>
-          <div class="layer">
-            <b>Services</b> · <code>skyConditionsService.ts</code>, <code>weatherClient.ts</code>
-          </div>
-          <div class="layer data">
-            <b>Data</b> · <code>LightPollutionRepository</code>
-          </div>
+          <h4>poly-service</h4>
+          <div class="layer"><b>Controller</b> · <code>marketController.ts</code></div>
+          <div class="layer"><b>Services</b> · <code>marketService.ts</code>, <code>polymarketClient.ts</code>, <code>marketNormalizer.ts</code></div>
+          <div class="layer"><b>Data</b> · <code>CategoryRepository</code></div>
         </div>
       </div>
       <div class="callout">
-        <strong>Règle de dépendance.</strong> Chaque couche ne dépend que de la couche inférieure,
-        toujours <b>via une interface</b> (<code>SpotRepository</code>, <code>WeatherClient</code>,
-        <code>SkyGateway</code>). On peut donc remplacer l'implémentation en mémoire par PostgreSQL
-        sans toucher au reste — et tester chaque couche isolément.
+        <strong>Règle de dépendance.</strong> Chaque couche dépend uniquement de la couche
+        inférieure, via une <b>interface</b> (<code>WatchRepository</code>,
+        <code>PolymarketClient</code>, <code>PolyGateway</code>…). Les implémentations en mémoire et
+        PostgreSQL sont interchangeables sans impact sur les couches supérieures.
       </div>
 
-      <h3 style="margin-top: 12px">2.3 — Séquence : planifier une observation</h3>
-      <div class="formula">Front ─▶ spot-service : POST /api/spots/{id}/plan { date }
-        spot-service ─▶ repository : get(spot)
-        spot-service ─▶ sky-service : GET /api/sky/assess?lat&amp;lon&amp;date
-                        sky-service ─▶ Data : findNearest(bortle)
-                        sky-service ─▶ Open-Meteo : GET /v1/forecast (cloudcover)
-                        Open-Meteo ─▶ sky-service : couverture nuageuse
-        sky-service ─▶ spot-service : { score, rating, recommended }
-spot-service ─▶ Front : { spot, date, assessment, recommended }</div>
+      <h3 style="margin-top: 12px">2.3 — Séquence : ajouter un marché puis rafraîchir</h3>
+      <div class="formula">Dashboard ─▶ watch-service : POST /api/watchlist { marketId }
+            watch-service ─▶ poly-service : GET /api/markets/{id}
+                            poly-service ─▶ Polymarket Gamma : GET /markets/{id}
+            watch-service : enregistre watchlist + 1er snapshot   <span class="c">[PostgreSQL]</span>
+Dashboard ─▶ watch-service : GET /api/dashboard
+            watch-service : snapshot par marché + agrégation KPIs
+            watch-service ─▶ Dashboard : { kpis, rows[] (sparklines) }</div>
     </section>
 
-    <!-- ===================== 3. TESTS & COUVERTURE ===================== -->
+    <!-- 3. TESTS -->
     <section class="page-break">
-      <div class="section-title">
-        <span class="num">03</span><h2>Tests, couverture & qualité</h2>
-      </div>
-
+      <div class="section-title"><span class="num">03</span><h2>Tests, couverture & qualité</h2></div>
       <div class="stats">
-        <div class="stat"><div class="big">56</div><div class="lbl">tests verts</div></div>
-        <div class="stat"><div class="big">100%</div><div class="lbl">lignes · sky</div></div>
-        <div class="stat"><div class="big">98%</div><div class="lbl">lignes · spot</div></div>
+        <div class="stat"><div class="big">76</div><div class="lbl">tests verts</div></div>
+        <div class="stat"><div class="big">97.9%</div><div class="lbl">lignes · poly</div></div>
+        <div class="stat"><div class="big">97.1%</div><div class="lbl">lignes · watch</div></div>
         <div class="stat"><div class="big">4</div><div class="lbl">couches testées</div></div>
       </div>
 
       <h3>Couverture de code</h3>
       <table>
         <thead>
-          <tr>
-            <th>Service</th>
-            <th>Tests</th>
-            <th>Statements</th>
-            <th>Branches</th>
-            <th>Functions</th>
-            <th>Lignes</th>
-          </tr>
+          <tr><th>Service</th><th>Tests</th><th>Statements</th><th>Branches</th><th>Functions</th><th>Lignes</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td>sky-service</td>
-            <td>30</td>
-            <td>100 %</td>
-            <td>92.59 %</td>
-            <td>100 %</td>
-            <td class="ok">100 %</td>
-          </tr>
-          <tr>
-            <td>spot-service</td>
-            <td>26</td>
-            <td>98.07 %</td>
-            <td>94.11 %</td>
-            <td>100 %</td>
-            <td class="ok">98.07 %</td>
-          </tr>
+          <tr><td>poly-service</td><td>40</td><td>98.13 %</td><td>91.78 %</td><td>100 %</td><td class="ok">97.91 %</td></tr>
+          <tr><td>watch-service</td><td>36</td><td>97.24 %</td><td>94.23 %</td><td>100 %</td><td class="ok">97.10 %</td></tr>
         </tbody>
       </table>
-      <p style="font-size: 9pt">
-        Couverture lignes globale
-        <span style="color: var(--muted)">(143 / 147 lignes exécutables)</span>
-      </p>
-      <div class="bar"><span style="width: 99%"></span></div>
+      <p style="font-size: 9pt">Couverture lignes globale <span style="color: var(--muted)">(228 / 234 lignes exécutables)</span></p>
+      <div class="bar"><span style="width: 97%"></span></div>
       <div class="callout" style="margin-top: 12px">
         Des <b>seuils minimaux sont imposés</b> dans <code>jest.config.js</code>
-        (<code>coverageThreshold</code> : 80 % branches / 85 % lignes). La CI <b>échoue</b> si la
-        couverture passe sous ces seuils — la qualité est donc verrouillée automatiquement.
+        (<code>coverageThreshold</code> : 80 % branches / 85 % lignes). La CI <b>échoue</b> sous ces
+        seuils — la qualité est verrouillée automatiquement.
       </div>
 
       <h3>Stratégie de test par couche</h3>
       <table>
-        <thead>
-          <tr><th>Couche</th><th>Type de test</th><th>Outils</th><th>Exemple</th></tr>
-        </thead>
+        <thead><tr><th>Couche</th><th>Type</th><th>Outils</th><th>Exemple</th></tr></thead>
         <tbody>
-          <tr><td>Data</td><td>Unitaire</td><td>Jest</td><td><code>lightPollutionRepository.test.ts</code></td></tr>
-          <tr><td>Services</td><td>Unitaire + mocks</td><td>Jest, nock</td><td><code>skyConditionsService.test.ts</code></td></tr>
-          <tr><td>Controller</td><td>Intégration HTTP</td><td>Supertest, nock</td><td><code>spotController.test.ts</code></td></tr>
-          <tr><td>Inter-service</td><td>Mock web</td><td>nock</td><td><code>skyClient.test.ts</code></td></tr>
+          <tr><td>Data</td><td>Unitaire</td><td>Jest</td><td><code>categoryRepository.test.ts</code></td></tr>
+          <tr><td>Services</td><td>Unitaire + mocks</td><td>Jest, nock</td><td><code>watchService.test.ts</code></td></tr>
+          <tr><td>Controller</td><td>Intégration HTTP</td><td>Supertest, nock</td><td><code>watchController.test.ts</code></td></tr>
+          <tr><td>Inter-service</td><td>Mock web</td><td>nock</td><td><code>polyGateway.test.ts</code></td></tr>
         </tbody>
       </table>
 
       <div class="grid2" style="margin-top: 6px">
         <div>
           <h3>Mocks web</h3>
-          <p style="font-size: 9.3pt">Deux frontières HTTP simulées avec <b>nock</b> :</p>
           <ul class="clean" style="font-size: 9.3pt">
-            <li><code>sky → Open-Meteo</code> (API externe)</li>
-            <li><code>spot → sky</code> (appel inter-service)</li>
+            <li><code>poly → Polymarket Gamma</code> (API externe)</li>
+            <li><code>watch → poly</code> (appel inter-service)</li>
           </ul>
-          <p style="font-size: 9.3pt">
-            → tests <b>isolés et déterministes</b>, sans dépendre du réseau.
-          </p>
+          <p style="font-size: 9.3pt">→ tests <b>isolés et déterministes</b>, sans réseau.</p>
         </div>
         <div>
           <h3>Qualité logicielle</h3>
@@ -629,61 +561,69 @@ spot-service ─▶ Front : { spot, date, assessment, recommended }</div>
       </div>
     </section>
 
-    <!-- ===================== 4. DEVOPS & CI ===================== -->
+    <!-- 4. DEVOPS -->
     <section class="page-break">
-      <div class="section-title">
-        <span class="num">04</span><h2>Conteneurisation & intégration continue</h2>
-      </div>
-
+      <div class="section-title"><span class="num">04</span><h2>Conteneurisation & intégration continue</h2></div>
       <h3>Docker (≥ 2 services back)</h3>
       <p style="font-size: 9.5pt">
-        <code>docker-compose.yml</code> orchestre <b>4 conteneurs</b> : <code>spot-service</code>,
-        <code>sky-service</code>, <code>postgres</code> et <code>frontend</code>. Chaque service back
-        a un <code>Dockerfile</code> <b>multi-stage</b> (build TypeScript → image runtime
+        <code>docker-compose.yml</code> orchestre <b>4 conteneurs</b> : <code>watch-service</code>,
+        <code>poly-service</code>, <code>postgres</code> et <code>frontend</code>. Chaque service
+        back a un <code>Dockerfile</code> <b>multi-stage</b> (build TypeScript → image
         <code>node:22-alpine</code>) avec <code>HEALTHCHECK</code>.
       </p>
-      <div class="formula">make up   <span class="c"># docker compose up --build → front sur http://localhost:8080</span></div>
+      <div class="formula">make up   <span class="c"># docker compose up --build → dashboard http://localhost:8080</span></div>
 
       <h3 style="margin-top: 14px">Pipeline CI — GitHub Actions</h3>
       <table>
-        <thead>
-          <tr><th>Étape</th><th>Job</th><th>Action</th></tr>
-        </thead>
+        <thead><tr><th>Étape</th><th>Job</th><th>Action</th></tr></thead>
         <tbody>
           <tr><td>1</td><td>test (matrice ×2)</td><td><code>npm ci</code> → <code>lint</code> → <code>build</code> → <code>test:coverage</code></td></tr>
           <tr><td>2</td><td>test</td><td>publication des rapports de couverture en artefacts</td></tr>
           <tr><td>3</td><td>docker</td><td>build des 3 images + <code>docker compose config</code></td></tr>
         </tbody>
       </table>
-      <div class="callout">
-        Pas de <b>Continuous Delivery</b> (hors programme) : le pipeline s'arrête au
-        build / test / qualité, conformément au sujet.
-      </div>
+      <div class="callout">Pas de <b>Continuous Delivery</b> (hors programme) : le pipeline s'arrête au build / test / qualité.</div>
 
       <h3 style="margin-top: 12px">Conformité au sujet</h3>
       <table>
-        <thead>
-          <tr><th>Exigence</th><th>Statut</th><th>Réalisation</th></tr>
-        </thead>
+        <thead><tr><th>Exigence</th><th>Statut</th><th>Réalisation</th></tr></thead>
         <tbody>
           <tr><td>Dépôt Git</td><td class="ok">✔</td><td>dépôt + historique de commits</td></tr>
           <tr><td>Pipeline CI</td><td class="ok">✔</td><td>GitHub Actions (lint·build·test·docker)</td></tr>
-          <tr><td>Architecture en couches</td><td class="ok">✔</td><td>Data / Services / Controller stricte</td></tr>
-          <tr><td>≥ 2 services back + Docker</td><td class="ok">✔</td><td>spot-service + sky-service</td></tr>
+          <tr><td>Architecture en couches</td><td class="ok">✔</td><td>Data / Services / Controller</td></tr>
+          <tr><td>≥ 2 services back + Docker</td><td class="ok">✔</td><td>watch-service + poly-service</td></tr>
           <tr><td>Tests de toutes les couches</td><td class="ok">✔</td><td>Jest + Supertest + nock</td></tr>
-          <tr><td>Bonne couverture</td><td class="ok">✔</td><td>≥ 98 % lignes, seuils imposés</td></tr>
+          <tr><td>Bonne couverture</td><td class="ok">✔</td><td>~97 % lignes, seuils imposés</td></tr>
           <tr><td>Qualité élevée</td><td class="ok">✔</td><td>TS strict · ESLint · Prettier</td></tr>
-          <tr><td>Bonus — Front web</td><td class="ok">✔</td><td>frontend nginx</td></tr>
-          <tr><td>Bonus — Base de données</td><td class="ok">✔</td><td>PostgreSQL 16</td></tr>
+          <tr><td>Bonus — Front web</td><td class="ok">✔</td><td>dashboard (graphes, filtres)</td></tr>
+          <tr><td>Bonus — Base de données</td><td class="ok">✔</td><td>PostgreSQL (watchlist + snapshots)</td></tr>
         </tbody>
       </table>
     </section>
 
-    <!-- ===================== 5. GOOGLE LABS ===================== -->
+    <!-- 5. DASHBOARD -->
     <section class="page-break">
-      <div class="section-title">
-        <span class="num">05</span><h2>Google Labs (Google Skills / Qwiklabs)</h2>
-      </div>
+      <div class="section-title"><span class="num">05</span><h2>Le dashboard</h2></div>
+      <p>
+        Front web (bonus) servi par nginx, thème sobre noir & vert. Il interroge
+        <code>watch-service</code> et affiche en temps réel :
+      </p>
+      <ul class="clean" style="font-size: 9.5pt">
+        <li><b>KPIs</b> : marchés suivis, volume 24h cumulé, boost score moyen, top mouvement 24h ;</li>
+        <li><b>Courbe d'évolution des cotes</b> (multi-séries, à partir des snapshots) ;</li>
+        <li><b>Donut</b> de répartition par catégorie ;</li>
+        <li><b>Table watchlist</b> : cote, variation colorée, barre de volume, sparkline, boost score ;</li>
+        <li>panneau <b>Découvrir</b> + filtre par catégorie + auto-refresh.</li>
+      </ul>
+      <figure>
+        <img src="/Users/dayss/Documents/GitHub/devopsprojet/docs/screenshots/polypulse-dashboard.png" alt="Dashboard PolyPulse" />
+        <figcaption>Dashboard PolyPulse — données réelles issues de l'API Polymarket via les deux micro-services.</figcaption>
+      </figure>
+    </section>
+
+    <!-- 6. GOOGLE LABS -->
+    <section class="page-break">
+      <div class="section-title"><span class="num">06</span><h2>Google Labs (Google Skills / Qwiklabs)</h2></div>
       <p>Parcours et labs Google Cloud réalisés — chaque évaluation à <b class="ok">100 %</b> :</p>
       <ul class="clean">
         <li><em>A Tour of Google Cloud Hands-on Labs</em> — Lab</li>
@@ -694,25 +634,19 @@ spot-service ─▶ Front : { spot, date, assessment, recommended }</div>
       </ul>
       <figure>
         <img src="/Users/dayss/Documents/GitHub/devopsprojet/docs/screenshots/google-skills-labs.png" alt="Progression Google Skills" />
-        <figcaption>
-          Capture — Google Skills, page « Progress » : labs complétés (Assessment 100 %), compte
-          Dayssam Bakaar.
-        </figcaption>
+        <figcaption>Google Skills — page « Progress » : labs complétés (Assessment 100 %), compte Dayssam Bakaar.</figcaption>
       </figure>
 
       <h3 style="margin-top: 12px">Limites & perspectives</h3>
       <ul class="clean" style="font-size: 9.5pt">
-        <li>
-          Open-Meteo ne couvre que ~16 jours de prévision ; au-delà, <code>sky-service</code> renvoie
-          un <code>502</code> (dégradation gracieuse <b>testée</b>).
-        </li>
-        <li>Catalogue de pollution lumineuse volontairement réduit (couche Data en mémoire).</li>
-        <li>Pistes : authentification, historique des sessions en base, phase lunaire.</li>
+        <li>Dépendance à l'API publique Polymarket Gamma (limites de débit) ; <code>poly-service</code> renvoie un <code>502</code> en cas d'indisponibilité (testé).</li>
+        <li>Les snapshots s'accumulent à l'usage : la courbe d'évolution s'enrichit dans le temps.</li>
+        <li>Pistes : alertes sur seuils de boost/volume, historique long terme, authentification.</li>
       </ul>
 
       <div class="footer-note">
-        AstroSpot — Rapport DevOps · Dayssam Bakaar & Kais Hammache · LSI 1 APP — Ingé 2 ·
-        Dépôt Git + CI GitHub Actions · 56 tests verts · ≥ 98 % de couverture.
+        PolyPulse — Rapport DevOps · Dayssam Bakaar & Kais Hammache · LSI 1 APP — Ingé 2 ·
+        Dépôt Git + CI GitHub Actions · 76 tests verts · ~97 % de couverture · 2 micro-services Docker + PostgreSQL.
       </div>
     </section>
   </body>
