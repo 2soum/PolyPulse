@@ -3,43 +3,57 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AstroSpot — Planificateur d'observation</title>
+    <title>PolyPulse — Surveillance des marchés boostés</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header>
-      <h1>🔭 AstroSpot</h1>
-      <p>Planifiez vos soirées d'observation des étoiles selon la météo et la pollution lumineuse.</p>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">◎</span>
+        <div>
+          <h1>PolyPulse</h1>
+          <p>Surveillance des marchés <b>boostés</b> sur Polymarket</p>
+        </div>
+      </div>
+      <div class="controls">
+        <select id="category" title="Filtrer par catégorie">
+          <option value="">Toutes catégories</option>
+        </select>
+        <label class="switch">
+          <input type="checkbox" id="auto" /> <span>Auto 15s</span>
+        </label>
+        <button id="refresh" class="btn">↻ Rafraîchir</button>
+      </div>
     </header>
 
-    <main>
-      <section class="card">
-        <h2>Ajouter un spot</h2>
-        <form id="spot-form">
-          <label>Nom <input name="name" required placeholder="Mont Aigoual" /></label>
-          <div class="row">
-            <label>Latitude <input name="latitude" type="number" step="any" required value="44.12" /></label>
-            <label>Longitude <input name="longitude" type="number" step="any" required value="3.58" /></label>
-          </div>
-          <label>Description <input name="description" placeholder="Sommet, horizon dégagé" /></label>
-          <button type="submit">Ajouter</button>
-          <p id="form-error" class="error" hidden></p>
-        </form>
+    <section class="kpis" id="kpis"></section>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Ma watchlist</h2>
+          <span class="hint" id="watch-count"></span>
+        </div>
+        <div class="cards" id="watchlist"></div>
       </section>
 
-      <section class="card">
-        <h2>Mes spots</h2>
-        <ul id="spot-list"></ul>
-      </section>
-
-      <section class="card" id="plan-result" hidden>
-        <h2>Résultat de la planification</h2>
-        <div id="plan-body"></div>
-      </section>
+      <aside class="panel discover">
+        <div class="panel-head">
+          <h2>Découvrir les boostés</h2>
+          <span class="hint">top volume 24h</span>
+        </div>
+        <div class="discover-list" id="discover"></div>
+      </aside>
     </main>
 
-    <footer>
-      <small>AstroSpot — projet DevOps · spot-service ↔ sky-service</small>
+    <footer class="foot">
+      PolyPulse · projet DevOps · <b>watch-service</b> ↔ <b>poly-service</b> ↔ Polymarket Gamma API
+      <span id="status" class="status"></span>
     </footer>
 
     <script src="app.js"></script>

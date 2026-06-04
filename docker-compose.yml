@@ -2,39 +2,39 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: astrospot
-      POSTGRES_PASSWORD: astrospot
-      POSTGRES_DB: astrospot
+      POSTGRES_USER: polypulse
+      POSTGRES_PASSWORD: polypulse
+      POSTGRES_DB: polypulse
     ports:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U astrospot']
+      test: ['CMD-SHELL', 'pg_isready -U polypulse']
       interval: 5s
       timeout: 3s
       retries: 10
 
-  sky-service:
-    build: ./services/sky-service
+  poly-service:
+    build: ./services/poly-service
     environment:
       PORT: 3002
-      WEATHER_BASE_URL: https://api.open-meteo.com
+      GAMMA_BASE_URL: https://gamma-api.polymarket.com
     ports:
       - '3002:3002'
 
-  spot-service:
-    build: ./services/spot-service
+  watch-service:
+    build: ./services/watch-service
     environment:
       PORT: 3001
-      SKY_BASE_URL: http://sky-service:3002
-      DATABASE_URL: postgres://astrospot:astrospot@postgres:5432/astrospot
+      POLY_BASE_URL: http://poly-service:3002
+      DATABASE_URL: postgres://polypulse:polypulse@postgres:5432/polypulse
     ports:
       - '3001:3001'
     depends_on:
       postgres:
         condition: service_healthy
-      sky-service:
+      poly-service:
         condition: service_started
 
   frontend:
@@ -42,7 +42,7 @@ services:
     ports:
       - '8080:80'
     depends_on:
-      - spot-service
+      - watch-service
 
 volumes:
   pgdata:

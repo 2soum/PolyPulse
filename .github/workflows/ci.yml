@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [sky-service, spot-service]
+        service: [poly-service, watch-service]
     defaults:
       run:
         working-directory: services/${{ matrix.service }}
@@ -50,11 +50,11 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
-      - name: Build sky-service image
-        run: docker build -t astrospot/sky-service ./services/sky-service
-      - name: Build spot-service image
-        run: docker build -t astrospot/spot-service ./services/spot-service
+      - name: Build poly-service image
+        run: docker build -t polypulse/poly-service ./services/poly-service
+      - name: Build watch-service image
+        run: docker build -t polypulse/watch-service ./services/watch-service
       - name: Build frontend image
-        run: docker build -t astrospot/frontend ./frontend
+        run: docker build -t polypulse/frontend ./frontend
       - name: Validate docker-compose
         run: docker compose config

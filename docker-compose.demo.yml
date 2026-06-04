@@ -1,0 +1,14 @@
+services:
+  postgres:
+    ports: !override []
+  poly-service:
+    ports: !override
+      - '13002:3002'
+  watch-service:
+    ports: !override
+      - '13001:3001'
+  frontend:
+    volumes:
+      - /tmp/polypulse-demo:/usr/share/nginx/html:ro
+    ports: !override
+      - '18080:80'
