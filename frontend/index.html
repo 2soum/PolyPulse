@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AstroSpot — Planificateur d'observation</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🔭 AstroSpot</h1>
+      <p>Planifiez vos soirées d'observation des étoiles selon la météo et la pollution lumineuse.</p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Ajouter un spot</h2>
+        <form id="spot-form">
+          <label>Nom <input name="name" required placeholder="Mont Aigoual" /></label>
+          <div class="row">
+            <label>Latitude <input name="latitude" type="number" step="any" required value="44.12" /></label>
+            <label>Longitude <input name="longitude" type="number" step="any" required value="3.58" /></label>
+          </div>
+          <label>Description <input name="description" placeholder="Sommet, horizon dégagé" /></label>
+          <button type="submit">Ajouter</button>
+          <p id="form-error" class="error" hidden></p>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Mes spots</h2>
+        <ul id="spot-list"></ul>
+      </section>
+
+      <section class="card" id="plan-result" hidden>
+        <h2>Résultat de la planification</h2>
+        <div id="plan-body"></div>
+      </section>
+    </main>
+
+    <footer>
+      <small>AstroSpot — projet DevOps · spot-service ↔ sky-service</small>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

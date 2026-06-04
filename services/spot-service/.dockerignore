@@ -1,0 +1,7 @@
+node_modules
+dist
+coverage
+test
+.eslintrc.json
+jest.config.js
+*.log
