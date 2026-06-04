@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Rapport DevOps — AstroSpot</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 18mm 16mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      :root {
+        --ink: #1a2238;
+        --muted: #5b6685;
+        --line: #e2e6f0;
+        --accent: #5566ff;
+        --accent2: #7c4dff;
+        --good: #16a34a;
+        --bg-soft: #f5f7fc;
+        --night1: #0b1026;
+        --night2: #1a2150;
+        --gold: #ffd479;
+      }
+      html {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      body {
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        color: var(--ink);
+        margin: 0;
+        font-size: 10.5pt;
+        line-height: 1.55;
+      }
+      h1,
+      h2,
+      h3 {
+        line-height: 1.2;
+        margin: 0 0 0.4em;
+      }
+      p {
+        margin: 0 0 0.7em;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      code {
+        font-family: "SFMono-Regular", Consolas, monospace;
+        background: var(--bg-soft);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 0.88em;
+        color: #3b3f86;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+
+      /* ---------- COVER ---------- */
+      .cover {
+        position: relative;
+        height: 247mm;
+        margin: -18mm -16mm 0;
+        padding: 34mm 22mm;
+        background: radial-gradient(circle at 22% 12%, #2a3570, transparent 45%),
+          linear-gradient(160deg, var(--night2), var(--night1) 70%);
+        background-color: var(--night1);
+        color: #eef2ff;
+        overflow: hidden;
+      }
+      .stars {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(1.4px 1.4px at 12% 18%, #fff, transparent),
+          radial-gradient(1.2px 1.2px at 30% 42%, #cfe, transparent),
+          radial-gradient(1.6px 1.6px at 55% 22%, #fff, transparent),
+          radial-gradient(1px 1px at 72% 60%, #fff, transparent),
+          radial-gradient(1.3px 1.3px at 85% 30%, #ffe9b0, transparent),
+          radial-gradient(1px 1px at 18% 72%, #fff, transparent),
+          radial-gradient(1.5px 1.5px at 64% 80%, #cfe, transparent),
+          radial-gradient(1px 1px at 42% 88%, #fff, transparent),
+          radial-gradient(1.2px 1.2px at 90% 70%, #fff, transparent);
+        opacity: 0.9;
+      }
+      .cover-inner {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .eyebrow {
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        font-size: 9pt;
+        color: var(--gold);
+        font-weight: 600;
+      }
+      .scope {
+        font-size: 64pt;
+        margin: 6mm 0 0;
+      }
+      .cover h1 {
+        font-size: 40pt;
+        margin: 2mm 0 0;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+      .cover .tagline {
+        font-size: 14pt;
+        color: #b9c2ec;
+        max-width: 130mm;
+        margin-top: 4mm;
+      }
+      .cover-meta {
+        margin-top: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6mm 10mm;
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
+        padding-top: 7mm;
+      }
+      .cover-meta .k {
+        font-size: 8.5pt;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8c96c6;
+      }
+      .cover-meta .v {
+        font-size: 12pt;
+        color: #fff;
+        font-weight: 600;
+      }
+      .cover-meta .v small {
+        display: block;
+        font-weight: 400;
+        color: #b9c2ec;
+        font-size: 9.5pt;
+      }
+
+      /* ---------- SECTIONS ---------- */
+      .section-title {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        border-bottom: 2px solid var(--line);
+        padding-bottom: 6px;
+        margin: 0 0 14px;
+      }
+      .section-title .num {
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 13pt;
+      }
+      .section-title h2 {
+        font-size: 15pt;
+        margin: 0;
+      }
+      .lead {
+        color: var(--muted);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 6px 0 14px;
+        font-size: 9.7pt;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 7px 9px;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        background: var(--bg-soft);
+        color: var(--muted);
+        font-size: 8.5pt;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      tr td:first-child {
+        font-weight: 600;
+      }
+      .ok {
+        color: var(--good);
+        font-weight: 700;
+      }
+
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .callout {
+        background: var(--bg-soft);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 8px 8px 0;
+        padding: 10px 14px;
+        margin: 10px 0;
+        font-size: 9.8pt;
+      }
+
+      /* ---------- STAT CARDS ---------- */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin: 6px 0 16px;
+      }
+      .stat {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+      }
+      .stat .big {
+        font-size: 22pt;
+        font-weight: 800;
+        color: var(--accent2);
+      }
+      .stat .lbl {
+        font-size: 8.5pt;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .bar {
+        height: 8px;
+        border-radius: 6px;
+        background: #eceffa;
+        overflow: hidden;
+        margin-top: 4px;
+      }
+      .bar > span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+      }
+
+      /* ---------- ARCHITECTURE DIAGRAM ---------- */
+      .arch {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        margin: 10px 0 4px;
+      }
+      .node {
+        flex: 1;
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 10px;
+        text-align: center;
+        background: #fff;
+      }
+      .node .t {
+        font-weight: 700;
+        font-size: 10pt;
+      }
+      .node .s {
+        font-size: 8.3pt;
+        color: var(--muted);
+      }
+      .node.spot {
+        border-color: #9db0ff;
+        background: #f3f6ff;
+      }
+      .node.sky {
+        border-color: #c9b0ff;
+        background: #f7f3ff;
+      }
+      .node.ext {
+        border-color: #ffd9a8;
+        background: #fff8ef;
+      }
+      .arrow {
+        align-self: center;
+        padding: 0 8px;
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 8pt;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .arrow small {
+        display: block;
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      .layers {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 8px;
+      }
+      .stack {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .stack h4 {
+        margin: 0;
+        padding: 8px 12px;
+        background: var(--ink);
+        color: #fff;
+        font-size: 9.5pt;
+      }
+      .layer {
+        padding: 8px 12px;
+        border-top: 1px solid var(--line);
+        font-size: 9pt;
+      }
+      .layer b {
+        color: var(--accent2);
+      }
+      .layer code {
+        font-size: 8.2pt;
+      }
+      .layer.controller {
+        background: #fbfcff;
+      }
+      .layer.data {
+        background: #fafbff;
+      }
+
+      /* ---------- FIGURE ---------- */
+      figure {
+        margin: 8px 0;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      figure img {
+        width: 100%;
+        display: block;
+      }
+      figcaption {
+        font-size: 8.6pt;
+        color: var(--muted);
+        padding: 7px 12px;
+        background: var(--bg-soft);
+      }
+      ul.clean {
+        margin: 4px 0 10px;
+        padding-left: 18px;
+      }
+      ul.clean li {
+        margin-bottom: 3px;
+      }
+      .formula {
+        font-family: "SFMono-Regular", Consolas, monospace;
+        background: var(--night1);
+        color: #d7e0ff;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 8.8pt;
+        line-height: 1.7;
+        white-space: pre;
+        overflow-x: auto;
+      }
+      .formula .c {
+        color: #7e88b8;
+      }
+      .footer-note {
+        margin-top: 16px;
+        font-size: 8.5pt;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        padding-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===================== COVER ===================== -->
+    <section class="cover">
+      <div class="stars"></div>
+      <div class="cover-inner">
+        <div class="eyebrow">Projet DevOps · Rapport écrit</div>
+        <div class="scope">🔭</div>
+        <h1>AstroSpot</h1>
+        <p class="tagline">
+          Planificateur de soirées d'observation des étoiles — une architecture micro-services qui
+          croise pollution lumineuse et météo pour noter la qualité du ciel.
+        </p>
+
+        <div class="cover-meta">
+          <div>
+            <div class="k">Binôme</div>
+            <div class="v">
+              Dayssam Bakaar
+              <small>Kais Hammache</small>
+            </div>
+          </div>
+          <div>
+            <div class="k">Classe</div>
+            <div class="v">
+              LSI 1 · APP
+              <small>Ingé 2</small>
+            </div>
+          </div>
+          <div>
+            <div class="k">Stack</div>
+            <div class="v">
+              TypeScript · Node 22
+              <small>Express · Jest · Docker</small>
+            </div>
+          </div>
+          <div>
+            <div class="k">Échéance</div>
+            <div class="v">
+              21 juin
+              <small>Remise sur Moodle</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 1. PRÉSENTATION ===================== -->
+    <section class="page-break">
+      <div class="section-title"><span class="num">01</span><h2>Présentation & cas d'usage</h2></div>
+      <p class="lead">
+        <strong>AstroSpot</strong> répond à une question concrète d'astronomie amateur :
+        <em>« Vaut-il la peine de sortir le télescope ce soir, à cet endroit ? »</em>
+      </p>
+      <p>L'application combine deux facteurs déterminants pour observer les étoiles :</p>
+      <ul class="clean">
+        <li>
+          la <b>pollution lumineuse</b> du site (échelle de Bortle : 1 = ciel pur → 9 = ciel
+          urbain) ;
+        </li>
+        <li>
+          la <b>couverture nuageuse</b> prévue, récupérée auprès d'une <b>API météo externe</b>
+          (Open-Meteo).
+        </li>
+      </ul>
+      <p>
+        Elle en déduit un <b>score de qualité du ciel</b> (0–100), une <b>note</b>
+        (EXCELLENT / GOOD / FAIR / POOR) et une <b>recommandation</b>.
+      </p>
+      <div class="callout">
+        <strong>Pourquoi ce sujet pour un projet DevOps ?</strong> Le découpage fonctionnel impose
+        <b>deux services back qui communiquent par HTTP</b>, créant <b>deux frontières réseau</b>
+        (<code>spot → sky</code> et <code>sky → météo</code>). Cela rend les <b>mocks web</b> exigés
+        par le sujet réellement nécessaires — et non artificiels.
+      </div>
+
+      <div class="formula"><span class="c"># Calcul du score de qualité du ciel</span>
+lightScore = (9 − bortleClass) / 8 × 100   <span class="c"># Bortle 1 → 100, Bortle 9 → 0</span>
+cloudScore = 100 − couvertureNuageuse(%)
+score      = round(0.5 × lightScore + 0.5 × cloudScore)   <span class="c"># borné [0,100]</span>
+
+rating      = EXCELLENT(≥80) · GOOD(≥60) · FAIR(≥40) · POOR(&lt;40)
+recommended = score ≥ 60</div>
+    </section>
+
+    <!-- ===================== 2. ARCHITECTURE ===================== -->
+    <section class="page-break">
+      <div class="section-title"><span class="num">02</span><h2>Architecture logicielle</h2></div>
+
+      <h3>2.1 — Vue micro-services</h3>
+      <div class="arch">
+        <div class="node">
+          <div class="t">Front web</div>
+          <div class="s">nginx · :8080</div>
+        </div>
+        <div class="arrow">──HTTP──▶<small>/api/spots</small></div>
+        <div class="node spot">
+          <div class="t">spot-service</div>
+          <div class="s">Express · :3001<br />+ PostgreSQL</div>
+        </div>
+        <div class="arrow">──HTTP──▶<small>/api/sky/assess</small></div>
+        <div class="node sky">
+          <div class="t">sky-service</div>
+          <div class="s">Express · :3002<br />+ pollution lumineuse</div>
+        </div>
+        <div class="arrow">──HTTP──▶<small>/v1/forecast</small></div>
+        <div class="node ext">
+          <div class="t">Open-Meteo</div>
+          <div class="s">API externe<br />météo</div>
+        </div>
+      </div>
+      <p class="lead" style="font-size: 9pt">
+        Deux services back indépendants, conteneurisés et orchestrés par <code>docker-compose</code>.
+        <code>spot-service</code> porte le domaine (spots & planification) ; <code>sky-service</code>
+        est un service de calcul sans état, réutilisable.
+      </p>
+
+      <h3 style="margin-top: 14px">2.2 — Architecture en couches (par service)</h3>
+      <div class="layers">
+        <div class="stack">
+          <h4>spot-service</h4>
+          <div class="layer controller">
+            <b>Controller</b> · <code>spotController.ts</code>
+          </div>
+          <div class="layer">
+            <b>Services</b> · <code>spotService.ts</code>, <code>skyClient.ts</code>
+          </div>
+          <div class="layer data">
+            <b>Data</b> · <code>SpotRepository</code> (InMemory · PostgreSQL)
+          </div>
+        </div>
+        <div class="stack">
+          <h4>sky-service</h4>
+          <div class="layer controller">
+            <b>Controller</b> · <code>skyController.ts</code>
+          </div>
+          <div class="layer">
+            <b>Services</b> · <code>skyConditionsService.ts</code>, <code>weatherClient.ts</code>
+          </div>
+          <div class="layer data">
+            <b>Data</b> · <code>LightPollutionRepository</code>
+          </div>
+        </div>
+      </div>
+      <div class="callout">
+        <strong>Règle de dépendance.</strong> Chaque couche ne dépend que de la couche inférieure,
+        toujours <b>via une interface</b> (<code>SpotRepository</code>, <code>WeatherClient</code>,
+        <code>SkyGateway</code>). On peut donc remplacer l'implémentation en mémoire par PostgreSQL
+        sans toucher au reste — et tester chaque couche isolément.
+      </div>
+
+      <h3 style="margin-top: 12px">2.3 — Séquence : planifier une observation</h3>
+      <div class="formula">Front ─▶ spot-service : POST /api/spots/{id}/plan { date }
+        spot-service ─▶ repository : get(spot)
+        spot-service ─▶ sky-service : GET /api/sky/assess?lat&amp;lon&amp;date
+                        sky-service ─▶ Data : findNearest(bortle)
+                        sky-service ─▶ Open-Meteo : GET /v1/forecast (cloudcover)
+                        Open-Meteo ─▶ sky-service : couverture nuageuse
+        sky-service ─▶ spot-service : { score, rating, recommended }
+spot-service ─▶ Front : { spot, date, assessment, recommended }</div>
+    </section>
+
+    <!-- ===================== 3. TESTS & COUVERTURE ===================== -->
+    <section class="page-break">
+      <div class="section-title">
+        <span class="num">03</span><h2>Tests, couverture & qualité</h2>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="big">56</div><div class="lbl">tests verts</div></div>
+        <div class="stat"><div class="big">100%</div><div class="lbl">lignes · sky</div></div>
+        <div class="stat"><div class="big">98%</div><div class="lbl">lignes · spot</div></div>
+        <div class="stat"><div class="big">4</div><div class="lbl">couches testées</div></div>
+      </div>
+
+      <h3>Couverture de code</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Tests</th>
+            <th>Statements</th>
+            <th>Branches</th>
+            <th>Functions</th>
+            <th>Lignes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>sky-service</td>
+            <td>30</td>
+            <td>100 %</td>
+            <td>92.59 %</td>
+            <td>100 %</td>
+            <td class="ok">100 %</td>
+          </tr>
+          <tr>
+            <td>spot-service</td>
+            <td>26</td>
+            <td>98.07 %</td>
+            <td>94.11 %</td>
+            <td>100 %</td>
+            <td class="ok">98.07 %</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size: 9pt">
+        Couverture lignes globale
+        <span style="color: var(--muted)">(143 / 147 lignes exécutables)</span>
+      </p>
+      <div class="bar"><span style="width: 99%"></span></div>
+      <div class="callout" style="margin-top: 12px">
+        Des <b>seuils minimaux sont imposés</b> dans <code>jest.config.js</code>
+        (<code>coverageThreshold</code> : 80 % branches / 85 % lignes). La CI <b>échoue</b> si la
+        couverture passe sous ces seuils — la qualité est donc verrouillée automatiquement.
+      </div>
+
+      <h3>Stratégie de test par couche</h3>
+      <table>
+        <thead>
+          <tr><th>Couche</th><th>Type de test</th><th>Outils</th><th>Exemple</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Data</td><td>Unitaire</td><td>Jest</td><td><code>lightPollutionRepository.test.ts</code></td></tr>
+          <tr><td>Services</td><td>Unitaire + mocks</td><td>Jest, nock</td><td><code>skyConditionsService.test.ts</code></td></tr>
+          <tr><td>Controller</td><td>Intégration HTTP</td><td>Supertest, nock</td><td><code>spotController.test.ts</code></td></tr>
+          <tr><td>Inter-service</td><td>Mock web</td><td>nock</td><td><code>skyClient.test.ts</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="grid2" style="margin-top: 6px">
+        <div>
+          <h3>Mocks web</h3>
+          <p style="font-size: 9.3pt">Deux frontières HTTP simulées avec <b>nock</b> :</p>
+          <ul class="clean" style="font-size: 9.3pt">
+            <li><code>sky → Open-Meteo</code> (API externe)</li>
+            <li><code>spot → sky</code> (appel inter-service)</li>
+          </ul>
+          <p style="font-size: 9.3pt">
+            → tests <b>isolés et déterministes</b>, sans dépendre du réseau.
+          </p>
+        </div>
+        <div>
+          <h3>Qualité logicielle</h3>
+          <ul class="clean" style="font-size: 9.3pt">
+            <li>TypeScript <code>strict</code> (+ noUnused*)</li>
+            <li>ESLint <span class="ok">0 erreur</span></li>
+            <li>Prettier + <code>.editorconfig</code></li>
+            <li>Erreurs typées → codes HTTP</li>
+            <li>Découplage par interfaces</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 4. DEVOPS & CI ===================== -->
+    <section class="page-break">
+      <div class="section-title">
+        <span class="num">04</span><h2>Conteneurisation & intégration continue</h2>
+      </div>
+
+      <h3>Docker (≥ 2 services back)</h3>
+      <p style="font-size: 9.5pt">
+        <code>docker-compose.yml</code> orchestre <b>4 conteneurs</b> : <code>spot-service</code>,
+        <code>sky-service</code>, <code>postgres</code> et <code>frontend</code>. Chaque service back
+        a un <code>Dockerfile</code> <b>multi-stage</b> (build TypeScript → image runtime
+        <code>node:22-alpine</code>) avec <code>HEALTHCHECK</code>.
+      </p>
+      <div class="formula">make up   <span class="c"># docker compose up --build → front sur http://localhost:8080</span></div>
+
+      <h3 style="margin-top: 14px">Pipeline CI — GitHub Actions</h3>
+      <table>
+        <thead>
+          <tr><th>Étape</th><th>Job</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>test (matrice ×2)</td><td><code>npm ci</code> → <code>lint</code> → <code>build</code> → <code>test:coverage</code></td></tr>
+          <tr><td>2</td><td>test</td><td>publication des rapports de couverture en artefacts</td></tr>
+          <tr><td>3</td><td>docker</td><td>build des 3 images + <code>docker compose config</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        Pas de <b>Continuous Delivery</b> (hors programme) : le pipeline s'arrête au
+        build / test / qualité, conformément au sujet.
+      </div>
+
+      <h3 style="margin-top: 12px">Conformité au sujet</h3>
+      <table>
+        <thead>
+          <tr><th>Exigence</th><th>Statut</th><th>Réalisation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Dépôt Git</td><td class="ok">✔</td><td>dépôt + historique de commits</td></tr>
+          <tr><td>Pipeline CI</td><td class="ok">✔</td><td>GitHub Actions (lint·build·test·docker)</td></tr>
+          <tr><td>Architecture en couches</td><td class="ok">✔</td><td>Data / Services / Controller stricte</td></tr>
+          <tr><td>≥ 2 services back + Docker</td><td class="ok">✔</td><td>spot-service + sky-service</td></tr>
+          <tr><td>Tests de toutes les couches</td><td class="ok">✔</td><td>Jest + Supertest + nock</td></tr>
+          <tr><td>Bonne couverture</td><td class="ok">✔</td><td>≥ 98 % lignes, seuils imposés</td></tr>
+          <tr><td>Qualité élevée</td><td class="ok">✔</td><td>TS strict · ESLint · Prettier</td></tr>
+          <tr><td>Bonus — Front web</td><td class="ok">✔</td><td>frontend nginx</td></tr>
+          <tr><td>Bonus — Base de données</td><td class="ok">✔</td><td>PostgreSQL 16</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===================== 5. GOOGLE LABS ===================== -->
+    <section class="page-break">
+      <div class="section-title">
+        <span class="num">05</span><h2>Google Labs (Google Skills / Qwiklabs)</h2>
+      </div>
+      <p>Parcours et labs Google Cloud réalisés — chaque évaluation à <b class="ok">100 %</b> :</p>
+      <ul class="clean">
+        <li><em>A Tour of Google Cloud Hands-on Labs</em> — Lab</li>
+        <li><em>Getting Started with Google Cloud</em> — Path</li>
+        <li><em>Create a Virtual Machine</em> — Lab</li>
+        <li><em>Build Infrastructure with Terraform on Google Cloud</em> — Course</li>
+        <li><em>Infrastructure as Code with Terraform</em> — Lab</li>
+      </ul>
+      <figure>
+        <img src="/Users/dayss/Documents/GitHub/devopsprojet/docs/screenshots/google-skills-labs.png" alt="Progression Google Skills" />
+        <figcaption>
+          Capture — Google Skills, page « Progress » : labs complétés (Assessment 100 %), compte
+          Dayssam Bakaar.
+        </figcaption>
+      </figure>
+
+      <h3 style="margin-top: 12px">Limites & perspectives</h3>
+      <ul class="clean" style="font-size: 9.5pt">
+        <li>
+          Open-Meteo ne couvre que ~16 jours de prévision ; au-delà, <code>sky-service</code> renvoie
+          un <code>502</code> (dégradation gracieuse <b>testée</b>).
+        </li>
+        <li>Catalogue de pollution lumineuse volontairement réduit (couche Data en mémoire).</li>
+        <li>Pistes : authentification, historique des sessions en base, phase lunaire.</li>
+      </ul>
+
+      <div class="footer-note">
+        AstroSpot — Rapport DevOps · Dayssam Bakaar & Kais Hammache · LSI 1 APP — Ingé 2 ·
+        Dépôt Git + CI GitHub Actions · 56 tests verts · ≥ 98 % de couverture.
+      </div>
+    </section>
+  </body>
+</html>

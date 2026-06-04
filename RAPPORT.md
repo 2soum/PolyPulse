@@ -1,6 +1,6 @@
 # Rapport de projet DevOps — AstroSpot
 
-> **Binôme :** Dayssam BAKAAR — _(ajouter le co-équipier)_
+> **Binôme :** Dayssam BAKAAR & Kais HAMMACHE — LSI 1 APP · Ingé 2
 > **Date limite :** 21 juin · **Dépôt :** Moodle
 > **Sujet (libre) :** planificateur de soirées d'observation des étoiles
 > **Langage (libre) :** TypeScript (Node.js 22)
