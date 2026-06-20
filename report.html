@@ -6,7 +6,7 @@
     <style>
       @page {
         size: A4;
-        margin: 16mm 15mm;
+        margin: 0;
       }
       * {
         box-sizing: border-box;
@@ -53,14 +53,15 @@
       }
       .page-break {
         page-break-before: always;
+        padding: 16mm 15mm;
       }
 
       /* COVER */
       .cover {
         position: relative;
-        height: 250mm;
-        margin: -16mm -15mm 0;
-        padding: 32mm 20mm;
+        height: 297mm;
+        margin: 0;
+        padding: 42mm 24mm 30mm;
         background: linear-gradient(160deg, var(--night2), var(--night1) 72%);
         background-color: var(--night1);
         color: #e8f5ee;
@@ -332,6 +333,14 @@
       figure img {
         width: 100%;
         display: block;
+      }
+      .grid2 figure {
+        margin: 0;
+      }
+      .grid2 figure img {
+        height: 47mm;
+        object-fit: cover;
+        object-position: top;
       }
       figcaption {
         font-size: 8.6pt;
@@ -616,7 +625,7 @@ Dashboard ─▶ watch-service : GET /api/dashboard
         <li>panneau <b>Découvrir</b> + filtre par catégorie + auto-refresh.</li>
       </ul>
       <figure>
-        <img src="/Users/dayss/Documents/GitHub/devopsprojet/docs/screenshots/polypulse-dashboard.png" alt="Dashboard PolyPulse" />
+        <img src="docs/screenshots/polypulse-dashboard.png" alt="Dashboard PolyPulse" />
         <figcaption>Dashboard PolyPulse — données réelles issues de l'API Polymarket via les deux micro-services.</figcaption>
       </figure>
     </section>
@@ -624,18 +633,28 @@ Dashboard ─▶ watch-service : GET /api/dashboard
     <!-- 6. GOOGLE LABS -->
     <section class="page-break">
       <div class="section-title"><span class="num">06</span><h2>Google Labs (Google Skills / Qwiklabs)</h2></div>
-      <p>Parcours et labs Google Cloud réalisés — chaque évaluation à <b class="ok">100 %</b> :</p>
+      <p>
+        Les <b>deux membres du binôme</b> ont suivi les parcours et labs Google Cloud (Skills Boost) —
+        chaque évaluation validée à <b class="ok">100 %</b> :
+      </p>
       <ul class="clean">
         <li><em>A Tour of Google Cloud Hands-on Labs</em> — Lab</li>
         <li><em>Getting Started with Google Cloud</em> — Path</li>
         <li><em>Create a Virtual Machine</em> — Lab</li>
-        <li><em>Build Infrastructure with Terraform on Google Cloud</em> — Course</li>
         <li><em>Infrastructure as Code with Terraform</em> — Lab</li>
+        <li><em>Build Infrastructure with Terraform on Google Cloud</em> — Course</li>
+        <li><em>Automating the Deployment of Networks with Terraform</em> — Lab</li>
       </ul>
-      <figure>
-        <img src="/Users/dayss/Documents/GitHub/devopsprojet/docs/screenshots/google-skills-labs.png" alt="Progression Google Skills" />
-        <figcaption>Google Skills — page « Progress » : labs complétés (Assessment 100 %), compte Dayssam Bakaar.</figcaption>
-      </figure>
+      <div class="grid2">
+        <figure>
+          <img src="docs/screenshots/google-skills-labs.png" alt="Google Skills — Dayssam Bakaar" />
+          <figcaption>Dayssam Bakaar — Google Skills « Progress » : labs validés (Assessment 100 %).</figcaption>
+        </figure>
+        <figure>
+          <img src="docs/screenshots/google-skills-kais.jpg" alt="Google Skills — Kais Hammache" />
+          <figcaption>Kais Hammache — Google Skills « Progress » : labs validés (Assessment 100 %).</figcaption>
+        </figure>
+      </div>
 
       <h3 style="margin-top: 12px">Limites & perspectives</h3>
       <ul class="clean" style="font-size: 9.5pt">
@@ -644,8 +663,91 @@ Dashboard ─▶ watch-service : GET /api/dashboard
         <li>Pistes : alertes sur seuils de boost/volume, historique long terme, authentification.</li>
       </ul>
 
+    </section>
+
+    <!-- 7. ANNEXES — RAPPORTS BRUTS -->
+    <section class="page-break">
+      <div class="section-title"><span class="num">07</span><h2>Annexes — rapports bruts</h2></div>
+      <p class="lead">
+        Sorties réelles et reproductibles des outils — les <b>rapports de tests, de couverture et de
+        qualité</b> exigés par le sujet. Reproductibles en local (<code>make coverage</code>,
+        <code>make lint</code>) et rejouées à chaque <code>push</code> par la CI.
+      </p>
+
+      <h3>A — Couverture de code (résumé Jest)</h3>
+      <div class="grid2">
+        <div>
+          <div style="font-size: 8.6pt; font-weight: 700; color: var(--green-d); margin-bottom: 4px">
+            poly-service · 6 suites · 40 tests ✔
+          </div>
+          <div class="formula">Statements : 98.13% ( 105/107 )
+Branches   : 91.78% (  67/73 )
+Functions  :  100%  (  31/31 )
+Lines      : 97.91% (  94/96 )</div>
+        </div>
+        <div>
+          <div style="font-size: 8.6pt; font-weight: 700; color: var(--green-d); margin-bottom: 4px">
+            watch-service · 5 suites · 36 tests ✔
+          </div>
+          <div class="formula">Statements : 97.24% ( 141/145 )
+Branches   : 94.23% (  49/52 )
+Functions  :  100%  (  40/40 )
+Lines      :  97.1% ( 134/138 )</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 12px">B — Couverture par fichier</h3>
+      <div class="grid2">
+        <table style="font-size: 8.1pt">
+          <thead><tr><th>poly-service</th><th>Stmt</th><th>Branch</th><th>Lignes</th></tr></thead>
+          <tbody>
+            <tr><td>app.ts</td><td>100</td><td>100</td><td>100</td></tr>
+            <tr><td>config.ts</td><td>100</td><td>80</td><td>100</td></tr>
+            <tr><td>controller/marketController</td><td>95.2</td><td>88.9</td><td>95</td></tr>
+            <tr><td>data/categoryRepository</td><td>100</td><td>100</td><td>100</td></tr>
+            <tr><td>services/marketNormalizer</td><td>96.7</td><td>90.2</td><td>96.2</td></tr>
+            <tr><td>services/marketService</td><td>100</td><td>100</td><td>100</td></tr>
+            <tr><td>services/polymarketClient</td><td>100</td><td>100</td><td>100</td></tr>
+            <tr><td><b>Tous fichiers</b></td><td><b>98.1</b></td><td><b>91.8</b></td><td class="ok">97.9</td></tr>
+          </tbody>
+        </table>
+        <table style="font-size: 8.1pt">
+          <thead><tr><th>watch-service</th><th>Stmt</th><th>Branch</th><th>Lignes</th></tr></thead>
+          <tbody>
+            <tr><td>app.ts</td><td>100</td><td>100</td><td>100</td></tr>
+            <tr><td>config.ts</td><td>100</td><td>80</td><td>100</td></tr>
+            <tr><td>errors.ts</td><td>100</td><td>100</td><td>100</td></tr>
+            <tr><td>controller/watchController</td><td>89.5</td><td>91.7</td><td>89.5</td></tr>
+            <tr><td>data/snapshotRepository</td><td>100</td><td>100</td><td>100</td></tr>
+            <tr><td>data/watchRepository</td><td>100</td><td>100</td><td>100</td></tr>
+            <tr><td>services/polyGateway</td><td>100</td><td>100</td><td>100</td></tr>
+            <tr><td>services/watchService</td><td>100</td><td>93.8</td><td>100</td></tr>
+            <tr><td><b>Tous fichiers</b></td><td><b>97.2</b></td><td><b>94.2</b></td><td class="ok">97.1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size: 8.4pt; color: var(--muted); margin-top: -6px">
+        Couverture des <b>fonctions : 100 %</b> (71/71) sur les deux services · colonnes en %.
+      </p>
+
+      <h3 style="margin-top: 10px">C — Tests, qualité &amp; build</h3>
+      <table>
+        <thead><tr><th>Contrôle</th><th>Commande</th><th>Résultat</th></tr></thead>
+        <tbody>
+          <tr><td>Tests</td><td><code>npm test</code> · Jest + Supertest + nock</td><td class="ok">76 / 76 ✔ · 11 suites</td></tr>
+          <tr><td>Lint</td><td><code>npm run lint</code> · ESLint</td><td class="ok">0 erreur · 0 warning</td></tr>
+          <tr><td>Compilation</td><td><code>npm run build</code> · tsc strict</td><td class="ok">OK · 0 erreur</td></tr>
+          <tr><td>Seuils couverture</td><td><code>coverageThreshold</code> (jest.config)</td><td class="ok">≥ 80 % br. / 85 % lignes — tenus</td></tr>
+        </tbody>
+      </table>
+      <div class="callout" style="font-size: 9.3pt">
+        Ces contrôles sont <b>bloquants en CI</b> : un lint en erreur, un build cassé ou une
+        couverture sous le seuil fait <b>échouer le pipeline</b> GitHub Actions. La qualité est donc
+        garantie automatiquement à chaque contribution.
+      </div>
+
       <div class="footer-note">
-        PolyPulse — Rapport DevOps · Dayssam Bakaar & Kais Hammache · LSI 1 APP — Ingé 2 ·
+        PolyPulse — Rapport DevOps · Dayssam Bakaar &amp; Kais Hammache · LSI 1 APP — Ingé 2 ·
         Dépôt Git + CI GitHub Actions · 76 tests verts · ~97 % de couverture · 2 micro-services Docker + PostgreSQL.
       </div>
     </section>
