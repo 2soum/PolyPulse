@@ -43,6 +43,10 @@
       p {
         margin: 0 0 0.7em;
       }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
       code {
         font-family: var(--mono);
         background: var(--green-soft);
@@ -415,6 +419,12 @@
             <div class="k">Échéance</div>
             <div class="v">21 juin<small>Remise sur Moodle</small></div>
           </div>
+          <div style="grid-column: 1 / -1">
+            <div class="k">Dépôt Git</div>
+            <div class="v" style="font-size: 11.5pt">
+              <a href="https://github.com/2soum/PolyPulse">github.com/2soum/PolyPulse</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -597,7 +607,7 @@ Dashboard ─▶ watch-service : GET /api/dashboard
       <table>
         <thead><tr><th>Exigence</th><th>Statut</th><th>Réalisation</th></tr></thead>
         <tbody>
-          <tr><td>Dépôt Git</td><td class="ok">✔</td><td>dépôt + historique de commits</td></tr>
+          <tr><td>Dépôt Git</td><td class="ok">✔</td><td>dépôt public — <a href="https://github.com/2soum/PolyPulse">github.com/2soum/PolyPulse</a></td></tr>
           <tr><td>Pipeline CI</td><td class="ok">✔</td><td>GitHub Actions (lint·build·test·docker)</td></tr>
           <tr><td>Architecture en couches</td><td class="ok">✔</td><td>Data / Services / Controller</td></tr>
           <tr><td>≥ 2 services back + Docker</td><td class="ok">✔</td><td>watch-service + poly-service</td></tr>
