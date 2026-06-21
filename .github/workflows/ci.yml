@@ -58,3 +58,24 @@ jobs:
         run: docker build -t polypulse/frontend ./frontend
       - name: Validate docker-compose
         run: docker compose config
+
+  sonarcloud:
+    name: SonarQube Cloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tests + couverture (poly-service)
+        working-directory: services/poly-service
+        run: npm ci && npm run test:coverage
+      - name: Tests + couverture (watch-service)
+        working-directory: services/watch-service
+        run: npm ci && npm run test:coverage
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarqube-scan-action@v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

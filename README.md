@@ -1,5 +1,10 @@
 # 🟢 PolyPulse — Surveillance des marchés boostés sur Polymarket
 
+[![CI](https://github.com/2soum/PolyPulse/actions/workflows/ci.yml/badge.svg)](https://github.com/2soum/PolyPulse/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=2soum_PolyPulse&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=2soum_PolyPulse)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=2soum_PolyPulse&metric=coverage)](https://sonarcloud.io/summary/new_code?id=2soum_PolyPulse)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=2soum_PolyPulse&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=2soum_PolyPulse)
+
 Projet **DevOps** — application répartie en deux micro-services back qui collaborent pour
 **surveiller les marchés de prédiction « boostés »** de [Polymarket](https://polymarket.com)
 (ceux qui offrent des récompenses de liquidité) et les afficher dans un **dashboard** temps réel.
