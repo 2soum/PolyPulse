@@ -333,6 +333,7 @@
         border: 1px solid var(--line);
         border-radius: 12px;
         overflow: hidden;
+        page-break-inside: avoid;
       }
       figure img {
         width: 100%;
@@ -523,7 +524,7 @@ Dashboard ─▶ watch-service : GET /api/dashboard
     <section class="page-break">
       <div class="section-title"><span class="num">03</span><h2>Tests, couverture & qualité</h2></div>
       <div class="stats">
-        <div class="stat"><div class="big">76</div><div class="lbl">tests verts</div></div>
+        <div class="stat"><div class="big">78</div><div class="lbl">tests verts</div></div>
         <div class="stat"><div class="big">97.9%</div><div class="lbl">lignes · poly</div></div>
         <div class="stat"><div class="big">97.1%</div><div class="lbl">lignes · watch</div></div>
         <div class="stat"><div class="big">4</div><div class="lbl">couches testées</div></div>
@@ -535,11 +536,11 @@ Dashboard ─▶ watch-service : GET /api/dashboard
           <tr><th>Service</th><th>Tests</th><th>Statements</th><th>Branches</th><th>Functions</th><th>Lignes</th></tr>
         </thead>
         <tbody>
-          <tr><td>poly-service</td><td>40</td><td>98.13 %</td><td>91.78 %</td><td>100 %</td><td class="ok">97.91 %</td></tr>
-          <tr><td>watch-service</td><td>36</td><td>97.24 %</td><td>94.23 %</td><td>100 %</td><td class="ok">97.10 %</td></tr>
+          <tr><td>poly-service</td><td>41</td><td>98.16 %</td><td>91.89 %</td><td>100 %</td><td class="ok">97.93 %</td></tr>
+          <tr><td>watch-service</td><td>37</td><td>97.27 %</td><td>94.33 %</td><td>100 %</td><td class="ok">97.12 %</td></tr>
         </tbody>
       </table>
-      <p style="font-size: 9pt">Couverture lignes globale <span style="color: var(--muted)">(228 / 234 lignes exécutables)</span></p>
+      <p style="font-size: 9pt">Couverture lignes globale <span style="color: var(--muted)">(230 / 236 lignes exécutables)</span></p>
       <div class="bar"><span style="width: 97%"></span></div>
       <div class="callout" style="margin-top: 12px">
         Des <b>seuils minimaux sont imposés</b> dans <code>jest.config.js</code>
@@ -599,6 +600,7 @@ Dashboard ─▶ watch-service : GET /api/dashboard
           <tr><td>1</td><td>test (matrice ×2)</td><td><code>npm ci</code> → <code>lint</code> → <code>build</code> → <code>test:coverage</code></td></tr>
           <tr><td>2</td><td>test</td><td>publication des rapports de couverture en artefacts</td></tr>
           <tr><td>3</td><td>docker</td><td>build des 3 images + <code>docker compose config</code></td></tr>
+          <tr><td>4</td><td>sonarcloud</td><td>couverture des 2 services → <code>SonarQube Cloud Scan</code> (Quality Gate)</td></tr>
         </tbody>
       </table>
       <div class="callout">Pas de <b>Continuous Delivery</b> (hors programme) : le pipeline s'arrête au build / test / qualité.</div>
@@ -614,15 +616,45 @@ Dashboard ─▶ watch-service : GET /api/dashboard
           <tr><td>Tests de toutes les couches</td><td class="ok">✔</td><td>Jest + Supertest + nock</td></tr>
           <tr><td>Bonne couverture</td><td class="ok">✔</td><td>~97 % lignes, seuils imposés</td></tr>
           <tr><td>Qualité élevée</td><td class="ok">✔</td><td>TS strict · ESLint · Prettier</td></tr>
+          <tr><td>Analyse qualité (SonarQube Cloud)</td><td class="ok">✔</td><td>Quality Gate <b>Passed</b> · A/A/A · 0 bug · 0 vulnérabilité (§ 5)</td></tr>
           <tr><td>Bonus — Front web</td><td class="ok">✔</td><td>dashboard (graphes, filtres)</td></tr>
           <tr><td>Bonus — Base de données</td><td class="ok">✔</td><td>PostgreSQL (watchlist + snapshots)</td></tr>
         </tbody>
       </table>
     </section>
 
-    <!-- 5. DASHBOARD -->
+    <!-- 5. SONARQUBE CLOUD -->
     <section class="page-break">
-      <div class="section-title"><span class="num">05</span><h2>Le dashboard</h2></div>
+      <div class="section-title"><span class="num">05</span><h2>Qualité logicielle — SonarQube Cloud</h2></div>
+      <p class="lead">
+        À <b>chaque push</b>, la CI lance une analyse <b>SonarQube Cloud</b> (avec import de la
+        couverture des deux services) et applique un <b>Quality Gate</b> bloquant. C'est le
+        « rapport de qualité » exigé par le sujet — mesuré automatiquement, et public.
+      </p>
+
+      <div class="stats">
+        <div class="stat"><div class="big ok" style="font-size: 13pt">PASSED</div><div class="lbl">Quality Gate</div></div>
+        <div class="stat"><div class="big">92.3%</div><div class="lbl">couverture</div></div>
+        <div class="stat"><div class="big">0</div><div class="lbl">bug · vulnérab.</div></div>
+        <div class="stat"><div class="big">0%</div><div class="lbl">duplication</div></div>
+      </div>
+
+      <div class="callout">
+        <strong>Boucle DevOps « analyse → correctif ».</strong> Sonar a relevé 2 vulnérabilités
+        <code>tssecurity:S7044</code> (un <code>id</code> client inséré dans le chemin d'une URL →
+        injection de chemin / SSRF). Corrigées par une <b>validation en liste blanche</b> +
+        <code>encodeURIComponent</code> (avec tests) → <b>note de sécurité C → A</b>.
+      </div>
+
+      <figure>
+        <img src="docs/screenshots/sonarcloud-dashboard.png" alt="Dashboard SonarQube Cloud — PolyPulse" />
+        <figcaption>SonarQube Cloud — projet public <code>2soum_PolyPulse</code> : Quality Gate <b>Passed</b>, notes A/A/A, couverture 92.3 %, duplication 0 %.</figcaption>
+      </figure>
+    </section>
+
+    <!-- 6. DASHBOARD -->
+    <section class="page-break">
+      <div class="section-title"><span class="num">06</span><h2>Le dashboard</h2></div>
       <p>
         Front web (bonus) servi par nginx, thème sobre noir & vert. Il interroge
         <code>watch-service</code> et affiche en temps réel :
@@ -640,9 +672,9 @@ Dashboard ─▶ watch-service : GET /api/dashboard
       </figure>
     </section>
 
-    <!-- 6. GOOGLE LABS -->
+    <!-- 7. GOOGLE LABS -->
     <section class="page-break">
-      <div class="section-title"><span class="num">06</span><h2>Google Labs (Google Skills / Qwiklabs)</h2></div>
+      <div class="section-title"><span class="num">07</span><h2>Google Labs (Google Skills / Qwiklabs)</h2></div>
       <p>
         Les <b>deux membres du binôme</b> ont suivi les parcours et labs Google Cloud (Skills Boost) —
         chaque évaluation validée à <b class="ok">100 %</b> :
@@ -675,9 +707,9 @@ Dashboard ─▶ watch-service : GET /api/dashboard
 
     </section>
 
-    <!-- 7. ANNEXES — RAPPORTS BRUTS -->
+    <!-- 8. ANNEXES — RAPPORTS BRUTS -->
     <section class="page-break">
-      <div class="section-title"><span class="num">07</span><h2>Annexes — rapports bruts</h2></div>
+      <div class="section-title"><span class="num">08</span><h2>Annexes — rapports bruts</h2></div>
       <p class="lead">
         Sorties réelles et reproductibles des outils — les <b>rapports de tests, de couverture et de
         qualité</b> exigés par le sujet. Reproductibles en local (<code>make coverage</code>,
@@ -688,21 +720,21 @@ Dashboard ─▶ watch-service : GET /api/dashboard
       <div class="grid2">
         <div>
           <div style="font-size: 8.6pt; font-weight: 700; color: var(--green-d); margin-bottom: 4px">
-            poly-service · 6 suites · 40 tests ✔
+            poly-service · 6 suites · 41 tests ✔
           </div>
-          <div class="formula">Statements : 98.13% ( 105/107 )
-Branches   : 91.78% (  67/73 )
+          <div class="formula">Statements : 98.16% ( 107/109 )
+Branches   : 91.89% (  68/74 )
 Functions  :  100%  (  31/31 )
-Lines      : 97.91% (  94/96 )</div>
+Lines      : 97.93% (  95/97 )</div>
         </div>
         <div>
           <div style="font-size: 8.6pt; font-weight: 700; color: var(--green-d); margin-bottom: 4px">
-            watch-service · 5 suites · 36 tests ✔
+            watch-service · 5 suites · 37 tests ✔
           </div>
-          <div class="formula">Statements : 97.24% ( 141/145 )
-Branches   : 94.23% (  49/52 )
+          <div class="formula">Statements : 97.27% ( 143/147 )
+Branches   : 94.33% (  50/53 )
 Functions  :  100%  (  40/40 )
-Lines      :  97.1% ( 134/138 )</div>
+Lines      : 97.12% ( 135/139 )</div>
         </div>
       </div>
 
@@ -718,7 +750,7 @@ Lines      :  97.1% ( 134/138 )</div>
             <tr><td>services/marketNormalizer</td><td>96.7</td><td>90.2</td><td>96.2</td></tr>
             <tr><td>services/marketService</td><td>100</td><td>100</td><td>100</td></tr>
             <tr><td>services/polymarketClient</td><td>100</td><td>100</td><td>100</td></tr>
-            <tr><td><b>Tous fichiers</b></td><td><b>98.1</b></td><td><b>91.8</b></td><td class="ok">97.9</td></tr>
+            <tr><td><b>Tous fichiers</b></td><td><b>98.2</b></td><td><b>91.9</b></td><td class="ok">97.9</td></tr>
           </tbody>
         </table>
         <table style="font-size: 8.1pt">
@@ -732,7 +764,7 @@ Lines      :  97.1% ( 134/138 )</div>
             <tr><td>data/watchRepository</td><td>100</td><td>100</td><td>100</td></tr>
             <tr><td>services/polyGateway</td><td>100</td><td>100</td><td>100</td></tr>
             <tr><td>services/watchService</td><td>100</td><td>93.8</td><td>100</td></tr>
-            <tr><td><b>Tous fichiers</b></td><td><b>97.2</b></td><td><b>94.2</b></td><td class="ok">97.1</td></tr>
+            <tr><td><b>Tous fichiers</b></td><td><b>97.3</b></td><td><b>94.3</b></td><td class="ok">97.1</td></tr>
           </tbody>
         </table>
       </div>
@@ -744,21 +776,20 @@ Lines      :  97.1% ( 134/138 )</div>
       <table>
         <thead><tr><th>Contrôle</th><th>Commande</th><th>Résultat</th></tr></thead>
         <tbody>
-          <tr><td>Tests</td><td><code>npm test</code> · Jest + Supertest + nock</td><td class="ok">76 / 76 ✔ · 11 suites</td></tr>
+          <tr><td>Tests</td><td><code>npm test</code> · Jest + Supertest + nock</td><td class="ok">78 / 78 ✔ · 11 suites</td></tr>
           <tr><td>Lint</td><td><code>npm run lint</code> · ESLint</td><td class="ok">0 erreur · 0 warning</td></tr>
           <tr><td>Compilation</td><td><code>npm run build</code> · tsc strict</td><td class="ok">OK · 0 erreur</td></tr>
           <tr><td>Seuils couverture</td><td><code>coverageThreshold</code> (jest.config)</td><td class="ok">≥ 80 % br. / 85 % lignes — tenus</td></tr>
+          <tr><td>Analyse Sonar</td><td><code>sonarqube-scan-action</code> · CI</td><td class="ok">Quality Gate Passed · A/A/A</td></tr>
         </tbody>
       </table>
-      <div class="callout" style="font-size: 9.3pt">
-        Ces contrôles sont <b>bloquants en CI</b> : un lint en erreur, un build cassé ou une
-        couverture sous le seuil fait <b>échouer le pipeline</b> GitHub Actions. La qualité est donc
-        garantie automatiquement à chaque contribution.
+      <div class="callout" style="font-size: 9.2pt">
+        Tous ces contrôles sont <b>bloquants en CI</b> — la qualité est garantie automatiquement à chaque <code>push</code>.
       </div>
 
       <div class="footer-note">
         PolyPulse — Rapport DevOps · Dayssam Bakaar &amp; Kais Hammache · LSI 1 APP — Ingé 2 ·
-        Dépôt Git + CI GitHub Actions · 76 tests verts · ~97 % de couverture · 2 micro-services Docker + PostgreSQL.
+        Dépôt Git + CI GitHub Actions · SonarQube Cloud (Gate Passed) · 78 tests verts · ~97 % de couverture · 2 micro-services Docker + PostgreSQL.
       </div>
     </section>
   </body>
