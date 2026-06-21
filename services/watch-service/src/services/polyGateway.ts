@@ -51,9 +51,13 @@ export class PolyClient implements PolyGateway {
   }
 
   async getMarket(id: string): Promise<Market | null> {
-    const response = await this.http.get<Market>(`${this.baseUrl}/api/markets/${id}`, {
-      validateStatus: (s) => (s >= 200 && s < 300) || s === 404,
-    });
+    // Sécurité (SonarQube tssecurity:S7044) : l'id provient du client → liste blanche
+    // stricte avant insertion dans le chemin de l'URL (anti-injection de chemin / SSRF).
+    if (!/^[\w-]{1,128}$/.test(id)) return null;
+    const response = await this.http.get<Market>(
+      `${this.baseUrl}/api/markets/${encodeURIComponent(id)}`,
+      { validateStatus: (s) => (s >= 200 && s < 300) || s === 404 },
+    );
     return response.status === 404 ? null : response.data;
   }
 

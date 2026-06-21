@@ -37,7 +37,10 @@ export class GammaPolymarketClient implements PolymarketClient {
   }
 
   async fetchMarket(id: string): Promise<RawMarket | null> {
-    const response = await this.http.get(`${this.baseUrl}/markets/${id}`, {
+    // Sécurité (SonarQube tssecurity:S7044) : l'id provient du client → liste blanche
+    // stricte avant insertion dans le chemin de l'URL (anti-injection de chemin / SSRF).
+    if (!/^[\w-]{1,128}$/.test(id)) return null;
+    const response = await this.http.get(`${this.baseUrl}/markets/${encodeURIComponent(id)}`, {
       validateStatus: (s) => (s >= 200 && s < 300) || s === 404,
     });
     if (response.status === 404 || !response.data) return null;

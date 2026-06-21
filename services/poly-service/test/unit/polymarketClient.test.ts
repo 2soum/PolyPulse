@@ -44,6 +44,13 @@ describe('GammaPolymarketClient (web mock)', () => {
     expect(await client.fetchMarket('999')).toBeNull();
   });
 
+  it('returns null for an unsafe id (path injection) without any HTTP call', async () => {
+    const client = new GammaPolymarketClient(BASE);
+    expect(await client.fetchMarket('../../etc/passwd')).toBeNull();
+    expect(await client.fetchMarket('a/b')).toBeNull();
+    expect(await client.fetchMarket('')).toBeNull();
+  });
+
   it('propagates upstream 5xx errors', async () => {
     nock(BASE).get('/markets').query(true).reply(500);
     const client = new GammaPolymarketClient(BASE);

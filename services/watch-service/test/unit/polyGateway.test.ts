@@ -36,6 +36,12 @@ describe('PolyClient (inter-service web mock)', () => {
     expect(await client.getMarket('999')).toBeNull();
   });
 
+  it('getMarket returns null for an unsafe id (no HTTP call)', async () => {
+    const client = new PolyClient(BASE);
+    expect(await client.getMarket('../../secret')).toBeNull();
+    expect(await client.getMarket('a/b')).toBeNull();
+  });
+
   it('getCategories returns the list', async () => {
     nock(BASE).get('/api/markets/categories').reply(200, ['Crypto', 'Sports']);
     const client = new PolyClient(BASE);
